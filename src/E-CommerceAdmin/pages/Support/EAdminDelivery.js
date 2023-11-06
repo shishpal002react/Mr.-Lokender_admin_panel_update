@@ -5,13 +5,13 @@ import { Table, Modal, Form, Button } from "react-bootstrap";
 import HOC from "../../layout/HOC";
 import { Dropdown, Menu } from "antd";
 import BaseUrl from "../../../BaseUrl";
-import axios from 'axios';
+import axios from "axios";
 
 const EAdminDelivery = () => {
   const [modalShow, setModalShow] = React.useState(false);
-  const [email,setEmail]=useState("");
-  const [phone,setPhone]=useState("");
-  const [whatPhone,setWhatPhone]=useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [whatPhone, setWhatPhone] = useState("");
 
   // const data = [
   //   {
@@ -23,8 +23,8 @@ const EAdminDelivery = () => {
 
   //api calling
   const [data, setData] = useState([]);
-  const getProducts = async() => {
-    console.log("ls data ",(localStorage.getItem("boon")))
+  const getProducts = async () => {
+    console.log("ls data ", localStorage.getItem("boon"));
     let url = `${BaseUrl()}api/v1/support/all`;
     try {
       const res = await axios.get(url, {
@@ -34,17 +34,15 @@ const EAdminDelivery = () => {
       });
 
       setData(res.data.supports);
-      console.log("admin support data",res.data.supports)
+      console.log("admin support data", res.data.supports);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-  
+  };
 
-  useEffect(() => {  
-    getProducts();    
+  useEffect(() => {
+    getProducts();
   }, []);
-
 
   const [query, setQuery] = useState("");
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -85,36 +83,36 @@ const EAdminDelivery = () => {
   }
 
   function MyVerticallyCenteredModal(props) {
+    const handleSubmit = (e) => {
+      e.preventDefault();
 
-    const handleSubmit=(e)=>{
-      e.preventDefault()
-
-      const getProducts = async() => {
-        console.log("ls",(localStorage.getItem("boon")))
+      const getProducts = async () => {
+        console.log("ls", localStorage.getItem("boon"));
         let url = `${BaseUrl()}api/v1/support`;
         try {
-          const res = await axios.post(url,{
-            email,phone,whatPhone
-          }, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("boon")}`,
+          const res = await axios.post(
+            url,
+            {
+              email,
+              phone,
+              whatPhone,
             },
-          });
-    
-          console.log("admin support data",res.data.supports)
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("boon")}`,
+              },
+            }
+          );
+
+          console.log("admin support data", res.data.supports);
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
-      } 
-    
-      useEffect(() => {  
-        getProducts();    
-      }, []);
-
-
-    }
- 
- 
+      };
+    };
+    useEffect(() => {
+      getProducts();
+    }, []);
 
     return (
       <Modal
@@ -132,15 +130,32 @@ const EAdminDelivery = () => {
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Email Address</Form.Label>
-              <Form.Control type="email" value={email} onChange={()=>setEmail(e.target.value)} required />
+              <Form.Control
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Mobile Number</Form.Label>
-              <Form.Control type="tel" pattern="[0-9]{10}" value={phone} onChange={()=>setPhone(e.target.value)} required />
+              <Form.Control
+                type="tel"
+                pattern="[0-9]{10}"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Whatsapp Number</Form.Label>
-              <Form.Control type="tel" pattern="[0-9]{10}" value={whatPhone} onChange={()=>setWhatPhone(e.target.value)} required />
+              <Form.Control
+                type="tel"
+                pattern="[0-9]{10}"
+                value={whatPhone}
+                onChange={(e) => setWhatPhone(e.target.value)}
+                required
+              />
             </Form.Group>
 
             <Button
@@ -173,8 +188,7 @@ const EAdminDelivery = () => {
             className="tracking-widest text-slate-900 font-semibold uppercase"
             style={{ fontSize: "1.5rem" }}
           >
-            Help & Support 
-            (Total : {data?.length})
+            Help & Support (Total : {data?.length})
           </span>
 
           <button

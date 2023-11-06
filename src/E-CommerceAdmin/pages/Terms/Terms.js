@@ -11,34 +11,33 @@ import {
   Alert,
 } from "react-bootstrap";
 import { Dropdown, Menu } from "antd";
-import BaseUrl from './../../../BaseUrl'
+import BaseUrl from "./../../../BaseUrl";
 import axios from "axios";
 
 const Terms = () => {
   const [modalShow, setModalShow] = React.useState(false);
 
-    //api calling
-    const [data, setData] = useState("");
-    const getProducts = async() => {
-      console.log("ls",(localStorage.getItem("token")))
-      let url = `${BaseUrl()}/api/v1/terms`;
-      try {
-        const res = await axios.get(url, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setData(res.data.product);
-        console.log(res.datat);
-      } catch (error) {
-        console.log(error)
-      }
+  //api calling
+  const [data, setData] = useState("");
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}/api/v1/terms`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setData(res.data.product);
+      console.log(res.datat);
+    } catch (error) {
+      console.log(error);
     }
- 
-    useEffect(() => {  
-      getProducts();    
-    }, []);
+  };
 
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -78,40 +77,38 @@ const Terms = () => {
   }
 
   function MyVerticallyCenteredModal(props) {
-    
-    const [description,setDescription]=useState("");
-  
+    const [description, setDescription] = useState("");
 
-    const postData={
-      terms:description
-    }
+    const postData = {
+      terms: description,
+    };
 
-    const handleSubmit=(e)=>{
-      e.preventDefault()
+    const handleSubmit = (e) => {
+      e.preventDefault();
 
-      const getProducts = async() => {
-        console.log("ls",(localStorage.getItem("token")))
+      const getProducts = async () => {
+        console.log("ls", localStorage.getItem("token"));
         let url = `${BaseUrl()}api/v1/terms`;
         try {
-          const res = await axios.post(url,{
-            postData
-          }, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+          const res = await axios.post(
+            url,
+            {
+              postData,
             },
-          });
-        
-    
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
-      } 
-    
-      useEffect(() => {  
-        getProducts();    
-      }, []);
-
-    }
+      };
+    };
+    useEffect(() => {
+      getProducts();
+    }, []);
 
     return (
       <Modal
@@ -135,7 +132,7 @@ const Terms = () => {
                 <Form.Control
                   as="textarea"
                   value={description}
-                  onChange={(e)=>setDescription(e.target.value)}
+                  onChange={(e) => setDescription(e.target.value)}
                   placeholder="Leave a comment here"
                 />
               </FloatingLabel>

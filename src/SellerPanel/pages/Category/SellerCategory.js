@@ -7,15 +7,17 @@ import { Dropdown, Menu } from "antd";
 import BaseUrl from "../../../BaseUrl";
 import axios from "axios";
 import FormData from "form-data";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ECategory = () => {
   const [modalShow, setModalShow] = React.useState(false);
   // const [edit, setEdit] = useState("");
+  const [id, setId] = useState("");
   //
-  const [editModel,setModelEdit]=React.useState(false);
+  const [editModel, setModelEdit] = React.useState(false);
+  const [EditName, setEditName] = useState("");
   // const [editValue,setEditValue]=React.useState("");
-
-  const [id,setId]=useState('');
 
   //api calling
   const [category, setCategory] = useState([]);
@@ -44,12 +46,15 @@ const ECategory = () => {
   const handleDelete = async (id) => {
     console.log(id);
     console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/Category/deleteCategory/${id}`;
+    let url = `${BaseUrl()}api/v1/admin/removeCategory/${id}`;
     try {
       const res = await axios.delete(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
       });
       getProducts();
     } catch (error) {
@@ -94,39 +99,38 @@ const ECategory = () => {
     }
   }
 
-  // Post model 
+  // Post model
   function MyVerticallyCenteredModal(props) {
-     const [name,setName]=useState("");
-     const [file,setFile] =useState();
-     const formdata = new FormData();
-     formdata.append("file",file);
+    const [name, setName] = useState("");
+    const [file, setFile] = useState();
+    const formdata = new FormData();
+    formdata.append("image", file);
 
-     const form={
-      image:formdata
-     }
-     const postData=()=>{
-      const getProducts = async() => {
-        console.log("ls",(localStorage.getItem("token")))
-        let url = `${BaseUrl()}api/v1/admin/createCategory/${name}`;
-        try {
-          const res = await axios.post(url,from,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          console.log("post request ",res.data)
-          getProducts()
-        } catch (error) {
-          console.log(error)
-        }
+    const postData = async (e) => {
+      e.preventDefault();
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/admin/createCategory/${name}`;
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Data is create successfully", res.data);
+        toast("Data is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
       }
-    
-      useEffect(() => {  
-        getProducts();    
-      }, []);
-     }
-    
+    };
+
+    // useEffect(() => {
+    //   getProducts();
+    // }, []);
+    // };
 
     return (
       <Modal
@@ -145,11 +149,20 @@ const ECategory = () => {
           <Form onSubmit={postData}>
             <Form.Group className="mb-3">
               <Form.Label>Image</Form.Label>
-              <Form.Control type="file" required onClick={(e)=>setFile(e.target.file[0])} />
+              <Form.Control
+                type="file"
+                required
+                onChange={(e) => setFile(e.target.files[0])}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" value={name} onChange={(e)=>setName(e.target.value)} required />
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
             </Form.Group>
 
             <Button
@@ -168,9 +181,43 @@ const ECategory = () => {
     );
   }
 
+  const handlePutRequest = (i) => {
+    setEditName(i.name);
+    setId(i._id);
+    setModelEdit(true);
+  };
+
   //put request
-   function MyVerticallyCenteredModalEdit(props) {
-    
+  function MyVerticallyCenteredModalEdit(props) {
+    //api calling please do it today
+    const [name, setName] = useState(EditName);
+    const [file, setFile] = useState();
+
+    console.log(id, "id is apply find");
+    const putRequest = async (e) => {
+      e.preventDefault();
+      const formdata = new FormData();
+      formdata.append("image", file);
+      formdata.append("name", name);
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/admin/updateCategory/${id}`;
+      try {
+        const res = await axios.put(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("put category data", res.data);
+        toast("Data is Edit successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setModelEdit(false);
+        getProducts();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -184,15 +231,23 @@ const ECategory = () => {
             {"Edit Category"}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body> 
-          <Form>
+        <Modal.Body>
+          <Form onSubmit={putRequest}>
             <Form.Group className="mb-3">
               <Form.Label>Image</Form.Label>
-              <Form.Control type="file" required />
+              <Form.Control
+                type="file"
+                onChange={(e) => setFile(e.target.files[0])}
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" required />
+              <Form.Control
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </Form.Group>
 
             <Button
@@ -210,8 +265,6 @@ const ECategory = () => {
       </Modal>
     );
   }
-
-
 
   return (
     <>
@@ -293,18 +346,21 @@ const ECategory = () => {
                                     className="two_Sec_Div"
                                     onClick={() => {
                                       // setEdit(true);
-                                      setModelEdit(true);
+                                      handlePutRequest(i);
+                                      // setModelEdit(true);
                                     }}
                                   >
                                     <i className="fa-solid fa-pen-to-square"></i>
-
-                                    <p onClick={()=>setId(i._id)}>Edit </p>
+                                    {/* onClick={() => setId(i._id)} */}
+                                    <p>Edit </p>
                                   </div>
                                 </Menu.Item>
                                 <Menu.Item key="3">
                                   <div className="two_Sec_Div">
                                     <i className="fa-sharp fa-solid fa-trash"></i>
-                                    <p onClick={()=>handleDelete(i._id)}>Delete </p>
+                                    <p onClick={() => handleDelete(i._id)}>
+                                      Delete{" "}
+                                    </p>
                                   </div>
                                 </Menu.Item>
                               </Menu>
@@ -370,6 +426,7 @@ const ECategory = () => {
           )}
         </section>
       </section>
+      <ToastContainer />
     </>
   );
 };

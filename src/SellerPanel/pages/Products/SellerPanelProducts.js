@@ -2,55 +2,293 @@
 
 import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
-import { Table } from "react-bootstrap";
+import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import SpinnerComp from "../Component/SpinnerComp";
 import { Dropdown, Menu } from "antd";
 import { Link } from "react-router-dom";
 import BaseUrl from "../../../BaseUrl";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SellerProducts = () => {
   const [query, setQuery] = useState("");
 
-    //api calling
-    const [product, setProduct] = useState([]);
-    const getProducts = async() => {
-      console.log("ls",(localStorage.getItem("token")))
-      let url = `${BaseUrl()}api/v1/products`;
+  //model
+  const [modalShow, setModalShow] = React.useState(false);
+
+  //api calling
+  const [product, setProduct] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/products`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("product from shoes section", res.data.products);
+      setProduct(res.data.products);
+      console.log("admin product data", res.data.products);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  //delete api api/v1/product/
+  const handleDelete = async (id) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/product/${id}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Product Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // post request
+  function MyVerticallyCenteredModal(props) {
+    const [name, setName] = useState();
+    const [description, setDescription] = useState();
+    const [color, setColor] = useState([]);
+    const [images, setImages] = useState([]);
+    const [price, setPrice] = useState();
+    const [features, setFeatures] = useState();
+    const [categoryId, setCategoryId] = useState("");
+    const [subCategoryId, setSubCategoryId] = useState("");
+    const [stock, setStock] = useState();
+    const [brand, setBrand] = useState();
+    const [simType, setSimType] = useState();
+    const [data1, setData1] = useState([]);
+    const [data2, setData2] = useState([]);
+
+    const postData = async (e) => {
+      e.preventDefault();
+
+      const formdata = new FormData();
+      formdata.append("image", images);
+      formdata.append("name", name);
+      formdata.append("description", description);
+      formdata.append("features", features);
+      formdata.append("color", color);
+      formdata.append("price", price);
+      formdata.append("category", categoryId);
+      formdata.append("subCategory", subCategoryId);
+      formdata.append("stock", stock);
+      formdata.append("brand", brand);
+      formdata.append("simType", simType);
+      formdata.append("name", name);
+
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/product/new`;
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Product is create successfully", res.data);
+        toast("Product is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    //category data
+    const categoryData = async () => {
+      let url = `${BaseUrl()}api/v1/admin/allCategory`;
       try {
         const res = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        console.log("product from shoes section",res.data.products);
-        setProduct(res.data.products);
-        console.log("admin product data",res.data.products)
+        //please check again
+        setData1(res.data.categories);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-  
-    useEffect(() => {  
-      getProducts();    
-    }, []);
+    };
 
-     //delete api api/v1/product/
-  const handleDelete=async(id)=>{
-    console.log(id);
-     console.log("ls",(localStorage.getItem("token")))
-     let url = `${BaseUrl()}api/v1/product/${id}`;
-     try {
-       const res = await axios.delete(url, {
-         headers: {
-           Authorization: `Bearer ${localStorage.getItem("token")}`,
-         },
-       });
-       getProducts(); 
-     } catch (error) {
-       console.log(error)
-     }
-   }
+    useEffect(() => {
+      if (props.show === true) {
+        categoryData();
+      }
+    }, [props]);
+
+    //category data
+    const subCategoryData = async () => {
+      let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+      try {
+        const res = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        //please check again
+        setData2(res.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      if (props.show === true) {
+        subCategoryData();
+      }
+    }, [props]);
+
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {" "}
+            {"Add Category"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={postData}>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Name</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Description</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Color</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+              />
+            </Form.Group>
+            {/* category id */}
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setCategoryId(e.target.value)}
+            >
+              <option>Select Category</option>
+              {data1 &&
+                data1?.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
+            </Form.Select>
+            {/* subcategory */}
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setSubCategoryId(e.target.value)}
+            >
+              <option>Select subCategory</option>
+              {data2 &&
+                data2?.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
+            </Form.Select>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Price</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Feature</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={features}
+                onChange={(e) => setFeatures(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Image</Form.Label>
+              <Form.Control
+                type="file"
+                required
+                onChange={(e) => setImages(e.target.files[0])}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Stock</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Brand</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product sim Type</Form.Label>
+              <Form.Control
+                type="text"
+                value={simType}
+                onChange={(e) => setSimType(e.target.value)}
+                required
+              />
+            </Form.Group>
+            <Button
+              style={{
+                backgroundColor: "#19376d",
+                borderRadius: "0",
+                border: "1px solid #19376d",
+              }}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
 
   // Pagination
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -107,6 +345,15 @@ const SellerProducts = () => {
         >
           All Product's ( Total : {product?.length} )
         </span>
+        <button
+          onClick={() => {
+            // setEdit(false);
+            setModalShow(true);
+          }}
+          className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
+        >
+          Add Product
+        </button>
       </div>
 
       <section className="sectionCont">
@@ -146,11 +393,11 @@ const SellerProducts = () => {
                     <tr key={index}>
                       <td> {index + 1} </td>
                       <td>
-                        <img src={i.img} alt="" style={{ width: "60px" }} />
+                        <img src={i.images} alt="" style={{ width: "60px" }} />
                       </td>
                       <td>{i.name}</td>
-                      <td>{i.review}</td>
-                      <td>{i.discount}</td>
+                      <td>{i.numOfReviews}</td>
+                      <td>{i.isDiscount}</td>
                       <td>{i.stock}</td>
                       <td>{i.price}</td>
                       <td>{i.discountedPrice}</td>
@@ -170,7 +417,9 @@ const SellerProducts = () => {
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p onClick={()=>handleDelete(i._id)} >Delete</p>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    Delete
+                                  </p>
                                 </div>
                               </Menu.Item>
                             </Menu>
@@ -215,7 +464,7 @@ const SellerProducts = () => {
                 <button
                   onClick={() => setCurrentPage2(pages2?.length)}
                   className={
-                    currentPage2 === pages2?.length ? "activePage" : ""
+                    currentPage2 === pages2?.length ? "activePage/error" : ""
                   }
                 >
                   {" "}
@@ -235,6 +484,11 @@ const SellerProducts = () => {
           </>
         )}
       </section>
+      <MyVerticallyCenteredModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
+      <ToastContainer />
     </>
   );
 };

@@ -6,10 +6,9 @@ import { AiOutlineMail } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
 import { Alert } from "react-bootstrap";
-import { Store } from 'react-notifications-component';
+import { Store } from "react-notifications-component";
 import axios from "axios";
 import BaseUrl from "../../BaseUrl";
-
 
 const Login = () => {
   const [pass, setPass] = useState(false);
@@ -17,14 +16,13 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [email,setEmail] =useState("e");
-  const [password,setPassword]=useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const data={
-    email:email,
-    password:password
-
-  }
+  const data = {
+    email: email,
+    password: password,
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -33,7 +31,7 @@ const Login = () => {
 
     try {
       const res = await axios.post(url, data);
-      console.log("post data",res)
+      console.log("post data", res);
       localStorage.setItem("token", res.data.data);
       navigate("/dashboard");
       Store.addNotification({
@@ -46,8 +44,8 @@ const Login = () => {
         animationOut: ["animate__animated", "animate__fadeOut"],
         dismiss: {
           duration: 2000,
-          onScreen: true
-        }
+          onScreen: true,
+        },
       });
       setLoading(false);
     } catch (err) {
@@ -81,7 +79,7 @@ const Login = () => {
                 placeholder="admin@gmail.com"
                 required
                 value={email}
-                onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 className="outline-none px-0.5  bg-transparent tracking-wider w-full"
               />
               <AiOutlineMail className="text-xl " />
@@ -92,7 +90,7 @@ const Login = () => {
                 placeholder="password"
                 name="password"
                 value={password}
-                onChange={(e)=>setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="outline-none px-0.5  bg-transparent tracking-wider w-full  "
               />

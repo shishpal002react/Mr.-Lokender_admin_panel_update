@@ -4,49 +4,73 @@ import HOC from "../../layout/HOC";
 import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import { Dropdown, Menu } from "antd";
 import BreadCamp from "../Component/BreadCamp";
+import axios from "axios";
+import BaseUrl from "../../../BaseUrl";
 
 const ESubCategory = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const [edit, setEdit] = useState("");
 
-  const data = [
-    {
-      category: "Electronics",
-      name: "Mobile",
-    },
-    {
-      category: "Electronics",
-      name: "Mobile Accessories",
-    },
-    {
-      category: "Electronics",
-      name: "Laptops",
-    },
-    {
-      category: "Fashion",
-      name: "Men's Top Wear",
-    },
-    {
-      category: "Home & Furniture",
-      name: "Bed Lines",
-    },
-    {
-      category: "Appliances",
-      name: "Refrigerator",
-    },
-    {
-      category: "Appliances",
-      name: "4K Samrt TVS",
-    },
-    {
-      category: "Appliances",
-      name: "Air Conditioners",
-    },
-    {
-      category: "Appliances",
-      name: "Fans",
-    },
-  ];
+  // const data = [
+  //   {
+  //     category: "Electronics",
+  //     name: "Mobile",
+  //   },
+  //   {
+  //     category: "Electronics",
+  //     name: "Mobile Accessories",
+  //   },
+  //   {
+  //     category: "Electronics",
+  //     name: "Laptops",
+  //   },
+  //   {
+  //     category: "Fashion",
+  //     name: "Men's Top Wear",
+  //   },
+  //   {
+  //     category: "Home & Furniture",
+  //     name: "Bed Lines",
+  //   },
+  //   {
+  //     category: "Appliances",
+  //     name: "Refrigerator",
+  //   },
+  //   {
+  //     category: "Appliances",
+  //     name: "4K Samrt TVS",
+  //   },
+  //   {
+  //     category: "Appliances",
+  //     name: "Air Conditioners",
+  //   },
+  //   {
+  //     category: "Appliances",
+  //     name: "Fans",
+  //   },
+  // ];
+  //  //api calling
+  const [data, setData] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("product from category section", res.data.categories);
+      setData(res.data.categories);
+      console.log("category", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -136,7 +160,7 @@ const ESubCategory = () => {
       />
 
       <section>
-        <BreadCamp name='Sub-Category' />
+        <BreadCamp name="Sub-Category" />
         <div
           className="pb-4   w-full flex justify-between items-center"
           style={{ width: "98%", marginLeft: "2%" }}

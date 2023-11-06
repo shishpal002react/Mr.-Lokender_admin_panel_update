@@ -5,37 +5,60 @@ import HOC from "../../layout/HOC";
 import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import { Dropdown, Menu } from "antd";
 import BreadCamp from "../Component/BreadCamp";
+import axios from "axios";
+import BaseUrl from "../../../BaseUrl";
 
 const ECategory = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const [edit, setEdit] = useState("");
 
-  const data = [
-    {
-      img: "https://rukminim1.flixcart.com/flap/128/128/image/69c6589653afdb9a.png?q=100",
-      name: "Electronics",
-    },
-    {
-      img: "https://rukminim1.flixcart.com/flap/128/128/image/29327f40e9c4d26b.png?q=100",
-      name: "Grocery",
-    },
-    {
-      img: "https://rukminim1.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png?q=100",
-      name: "Mobiles",
-    },
-    {
-      img: "https://rukminim1.flixcart.com/fk-p-flap/128/128/image/0d75b34f7d8fbcb3.png?q=100",
-      name: "Mobiles",
-    },
-    {
-      img: "https://rukminim1.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg?q=100",
-      name: "Home & Furniture",
-    },
-    {
-      img: "https://rukminim1.flixcart.com/flap/128/128/image/0ff199d1bd27eb98.png?q=100",
-      name: "Appliances",
-    },
-  ];
+  // const data = [
+  //   {
+  //     img: "https://rukminim1.flixcart.com/flap/128/128/image/69c6589653afdb9a.png?q=100",
+  //     name: "Electronics",
+  //   },
+  //   {
+  //     img: "https://rukminim1.flixcart.com/flap/128/128/image/29327f40e9c4d26b.png?q=100",
+  //     name: "Grocery",
+  //   },
+  //   {
+  //     img: "https://rukminim1.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png?q=100",
+  //     name: "Mobiles",
+  //   },
+  //   {
+  //     img: "https://rukminim1.flixcart.com/fk-p-flap/128/128/image/0d75b34f7d8fbcb3.png?q=100",
+  //     name: "Mobiles",
+  //   },
+  //   {
+  //     img: "https://rukminim1.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg?q=100",
+  //     name: "Home & Furniture",
+  //   },
+  //   {
+  //     img: "https://rukminim1.flixcart.com/flap/128/128/image/0ff199d1bd27eb98.png?q=100",
+  //     name: "Appliances",
+  //   },
+  // ];
+  const [data, setData] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/allCategory`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("product from category section", res.data.categories);
+      setData(res.data.categories);
+      console.log("category", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   // Pagination and Filter
   const [query, setQuery] = useState("");

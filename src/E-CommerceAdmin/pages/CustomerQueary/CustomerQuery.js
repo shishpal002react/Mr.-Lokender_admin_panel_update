@@ -5,14 +5,13 @@ import { Table, Modal, Form, Button } from "react-bootstrap";
 import HOC from "../../layout/HOC";
 import { Dropdown, Menu } from "antd";
 import BaseUrl from "../../../BaseUrl";
-import axios from 'axios';
+import axios from "axios";
 
 const CustomerQuery = () => {
-
   //api calling
   const [data, setData] = useState([]);
-  const getProducts = async() => {
-    console.log("ls data ",(localStorage.getItem("token")))
+  const getProducts = async () => {
+    console.log("ls data ", localStorage.getItem("token"));
     let url = `${BaseUrl()}api/v1/help`;
     try {
       const res = await axios.get(url, {
@@ -22,22 +21,21 @@ const CustomerQuery = () => {
       });
 
       setData(res.data.message);
-      console.log("admin support data",res.data.message)
+      console.log("admin support data", res.data.message);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-  
+  };
 
-  useEffect(() => {  
-    getProducts();    
+  useEffect(() => {
+    getProducts();
   }, []);
 
-  const handleDelete=(id)=>{
-   console.log("customer id",id)
+  const handleDelete = (id) => {
+    console.log("customer id", id);
 
-    const getProducts = async() => {
-      console.log("ls data ",(localStorage.getItem("boon")))
+    const getProducts = async () => {
+      console.log("ls data ", localStorage.getItem("boon"));
       let url = `${BaseUrl()}api/v1/help/delete/${id}`;
       try {
         const res = await axios.delete(url, {
@@ -45,18 +43,15 @@ const CustomerQuery = () => {
             Authorization: `Bearer ${localStorage.getItem("boon")}`,
           },
         });
-  
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
-    
-    useEffect(() => {  
-      getProducts();    
-    }, []);
+    };
+  };
 
-  }
-
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   const [query, setQuery] = useState("");
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -96,10 +91,8 @@ const CustomerQuery = () => {
     }
   }
 
-
   return (
     <>
-
       <section>
         <p className="headP">Dashboard / Customer Query </p>
 
@@ -111,10 +104,8 @@ const CustomerQuery = () => {
             className="tracking-widest text-slate-900 font-semibold uppercase"
             style={{ fontSize: "1.5rem" }}
           >
-            Help & Support 
-            (Total : {data?.length})
+            Help & Support (Total : {data?.length})
           </span>
-
         </div>
         <section className="sectionCont">
           <div className="filterBox">
@@ -157,7 +148,9 @@ const CustomerQuery = () => {
                             <Menu.Item key="1">
                               <div className="two_Sec_Div">
                                 <i className="fa-sharp fa-solid fa-trash"></i>
-                                <p onClick={()=>handleDelete(i._id)}>Delete </p>
+                                <p onClick={() => handleDelete(i._id)}>
+                                  Delete{" "}
+                                </p>
                               </div>
                             </Menu.Item>
                           </Menu>

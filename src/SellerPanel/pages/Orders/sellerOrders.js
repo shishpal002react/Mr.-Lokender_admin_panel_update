@@ -4,11 +4,36 @@ import { Dropdown, Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import { Alert, Badge, Button, Form, Modal, Table } from "react-bootstrap";
 import HOC from "../../layout/HOC";
+import axios from "axios";
+import BaseUrl from "../../../BaseUrl";
 
 const EAdminOrders = () => {
   const [modalShow, setModalShow] = useState(false);
 
-  const data = [
+  //api calling
+  // const [order, setOrder] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("product from category section", res.data.categories);
+      // setOrder(res.data.categories);
+      console.log("category", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const order = [
     {
       user: "Varun",
       totalPrice: "500",
@@ -41,8 +66,10 @@ const EAdminOrders = () => {
   let pages2 = [];
 
   const TotolData = query
-    ? data?.filter((i) => i?.user?.toLowerCase().includes(query?.toLowerCase()))
-    : data;
+    ? order?.filter((i) =>
+        i?.user?.toLowerCase().includes(query?.toLowerCase())
+      )
+    : order;
 
   useEffect(() => {
     if (query) {
@@ -108,11 +135,11 @@ const EAdminOrders = () => {
             className="tracking-widest text-slate-900 font-semibold uppercase"
             style={{ fontSize: "1.5rem" }}
           >
-            All Order's (Total : {data?.length})
+            All Order's (Total : {order?.length})
           </span>
         </div>
         <section className="sectionCont">
-          {data?.length === 0 || !data ? (
+          {order?.length === 0 || !order ? (
             <Alert>No Data Found</Alert>
           ) : (
             <>

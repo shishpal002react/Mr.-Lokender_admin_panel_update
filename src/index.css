@@ -274,7 +274,7 @@ html {
   margin-left: 2%;
   color: #7b7c7d;
 }
-.headP a{
+.headP a {
   color: #7b7c7d;
 }
 .filterBox {
@@ -362,8 +362,14 @@ html {
 
 .gridCont {
   display: grid;
-  grid-template-columns: auto auto auto;
+  grid-template-columns: auto auto;
   justify-content: space-evenly;
+  margin-bottom: 100px;
+  /* grid-auto-flow: row dense; */
+  /* display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  flex-direction: column; */
 }
 .gridCont div {
   width: 400px;
@@ -375,9 +381,11 @@ html {
   justify-content: space-between;
   flex-direction: column;
 }
+
 .gridCont div img {
   width: 100%;
 }
+
 .delete-Btn {
   width: 90%;
   margin-left: 5%;
@@ -385,7 +393,6 @@ html {
   border: 1px solid #c44b3f;
   transition: 0.5s;
   padding: 10px;
-
 }
 
 .delete-Btn:hover {
@@ -513,22 +520,21 @@ html {
   font-weight: 600;
   color: #555;
 }
-.Detail_Section .right_Cont .two_Sec{
+.Detail_Section .right_Cont .two_Sec {
   display: flex;
   gap: 20px;
   align-items: center;
 }
-.Detail_Section .right_Cont .two_Sec .first{
+.Detail_Section .right_Cont .two_Sec .first {
   font-size: 25px;
   font-weight: 800;
 }
-.Detail_Section .right_Cont .two_Sec .second{
+.Detail_Section .right_Cont .two_Sec .second {
   font-size: 16px;
   text-decoration: line-through;
   font-weight: 600;
   color: #7b7c7d;
-
 }
-.Detail_Section .right_Cont ul{
+.Detail_Section .right_Cont ul {
   list-style-type: disc;
 }

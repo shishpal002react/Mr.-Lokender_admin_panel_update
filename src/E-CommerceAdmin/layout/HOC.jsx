@@ -34,7 +34,7 @@ const HOC = (Wcomponenet) => {
             style={{ backgroundColor: "#f2f3f8" }}
           >
             <Navbar hamb={hamb} setHamb={setHamb} />
-            <div className="my-6 text-#000 h-[87%] wcomp overflow-y-auto">
+            <div className="my-6 text-#000 h-[87%] wcomp ">
               {" "}
               <Wcomponenet />
             </div>
@@ -46,10 +46,3 @@ const HOC = (Wcomponenet) => {
 };
 
 export default HOC;
-
-
-
-
-
-
-

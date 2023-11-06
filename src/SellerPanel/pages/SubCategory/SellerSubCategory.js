@@ -3,49 +3,61 @@ import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
 import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import { Dropdown, Menu } from "antd";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ESubCategory = () => {
   const [modalShow, setModalShow] = React.useState(false);
-  const [edit, setEdit] = useState("");
+  const [modalShowEdit, setModalShowEdit] = React.useState(false);
 
-  const data = [
-    {
-      category: "Electronics",
-      name: "Mobile",
-    },
-    {
-      category: "Electronics",
-      name: "Mobile Accessories",
-    },
-    {
-      category: "Electronics",
-      name: "Laptops",
-    },
-    {
-      category: "Fashion",
-      name: "Men's Top Wear",
-    },
-    {
-      category: "Home & Furniture",
-      name: "Bed Lines",
-    },
-    {
-      category: "Appliances",
-      name: "Refrigerator",
-    },
-    {
-      category: "Appliances",
-      name: "4K Samrt TVS",
-    },
-    {
-      category: "Appliances",
-      name: "Air Conditioners",
-    },
-    {
-      category: "Appliances",
-      name: "Fans",
-    },
-  ];
+  //edit product
+  const [id, setId] = useState("");
+  const [nameEdit, setNameEdit] = useState("");
+
+  //api calling
+  const [subCategory, setSubCategory] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("product from category section", res.data.categories);
+      setSubCategory(res.data.categories);
+      console.log("category", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  //delete subCategory
+  const handleDelete = async (id) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/delete/sub/Category${id}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -57,8 +69,10 @@ const ESubCategory = () => {
   let pages2 = [];
 
   const TotolData = query
-    ? data?.filter((i) => i?.name?.toLowerCase().includes(query?.toLowerCase()))
-    : data;
+    ? subCategory?.filter((i) =>
+        i?.name?.toLowerCase().includes(query?.toLowerCase())
+      )
+    : subCategory;
 
   useEffect(() => {
     if (query) {
@@ -82,7 +96,60 @@ const ESubCategory = () => {
     }
   }
 
+  // post request
   function MyVerticallyCenteredModal(props) {
+    const [name, setName] = useState("");
+    const [subCategoryId, setSubcategory] = useState("");
+    const [data, setDate] = useState([]);
+
+    const postData = async (e) => {
+      e.preventDefault();
+
+      const formdata = new FormData();
+      formdata.append("name", name);
+      formdata.append("categoryId", subCategoryId);
+
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/admin/createCategory/${name}`;
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Data is create successfully", res.data);
+        toast("Data is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    //category data
+    const subCategoryData = async () => {
+      let url = `${BaseUrl()}api/v1/admin/allCategory`;
+      try {
+        const res = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        //please check again
+        setDate(res.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      if (props.show === true) {
+        subCategoryData();
+      }
+    }, [props]);
+
     return (
       <Modal
         {...props}
@@ -93,24 +160,116 @@ const ESubCategory = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {edit ? "Edit Sub Category" : " Add Sub Category"}
+            {" Add Sub Category"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={postData}>
+            <Form.Group className="mb-3">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Group>
+
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setSubcategory(e.target.value)}
+            >
+              <option>-- Select Category --</option>
+              {data &&
+                data?.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
+            </Form.Select>
+
+            <Button
+              style={{
+                backgroundColor: "#19376d",
+                borderRadius: "0",
+                border: "1px solid #19376d",
+              }}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  //put request
+
+  const handleEditCategory = (i) => {
+    setId(i._id);
+    setModalShowEdit(true);
+    setNameEdit(i.name);
+  };
+
+  function MyVerticallyCenteredModalEdit(props) {
+    const [name, setName] = useState(nameEdit);
+    const [subCategoryId, setSubcategory] = useState("");
+    const [data, setDate] = useState([]);
+
+    //category data
+    const subCategoryData = async () => {
+      let url = `${BaseUrl()}api/v1/admin/allCategory`;
+      try {
+        const res = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        //please check again
+        setDate(res.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      console.log("dsada");
+      if (props.show === true) {
+        subCategoryData();
+      }
+    }, [props]);
+    console.log(id, "id is define");
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {" "}
+            {"Edit Sub Category"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
-              <Form.Control type="text" required />
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Select aria-label="Default select example" className="mb-3">
               <option>-- Select Category --</option>
-              <option>Electronics</option>
-              <option>Grocery</option>
-              <option>Mobiles</option>
-              <option>Appliances</option>
+              {data &&
+                data?.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
             </Form.Select>
-
             <Button
               style={{
                 backgroundColor: "#19376d",
@@ -133,6 +292,10 @@ const ESubCategory = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+      <MyVerticallyCenteredModalEdit
+        show={modalShowEdit}
+        onHide={() => setModalShowEdit(false)}
+      />
 
       <section>
         <p className="headP">Dashboard / Sub-Category</p>
@@ -144,11 +307,11 @@ const ESubCategory = () => {
             className="tracking-widest text-slate-900 font-semibold uppercase"
             style={{ fontSize: "1.5rem" }}
           >
-            All Sub-Category's ( Total : {data?.length} )
+            All Sub-Category's ( Total : {subCategory?.length} )
           </span>
           <button
             onClick={() => {
-              setEdit(false);
+              // setEdit(false);
               setModalShow(true);
             }}
             className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
@@ -158,7 +321,7 @@ const ESubCategory = () => {
         </div>
 
         <section className="sectionCont">
-          {data?.length === 0 || !data ? (
+          {subCategory?.length === 0 || !subCategory ? (
             <Alert>Sub-Categories Not Found</Alert>
           ) : (
             <>
@@ -189,7 +352,7 @@ const ESubCategory = () => {
                       <tr key={index}>
                         <td>#{index + 1} </td>
                         <td>{i.name} </td>
-                        <td> {i.category} </td>
+                        <td> {i?.categoryId?.name} </td>
                         <td>
                           <Dropdown
                             overlay={
@@ -198,8 +361,9 @@ const ESubCategory = () => {
                                   <div
                                     className="two_Sec_Div"
                                     onClick={() => {
-                                      setEdit(true);
-                                      setModalShow(true);
+                                      // setEdit(true);
+                                      // setModalShowEdit(true);
+                                      handleEditCategory(i);
                                     }}
                                   >
                                     <i className="fa-solid fa-pen-to-square"></i>
@@ -210,7 +374,9 @@ const ESubCategory = () => {
                                 <Menu.Item key="3">
                                   <div className="two_Sec_Div">
                                     <i className="fa-sharp fa-solid fa-trash"></i>
-                                    <p>Delete </p>
+                                    <p onClick={() => handleDelete(i._id)}>
+                                      Delete{" "}
+                                    </p>
                                   </div>
                                 </Menu.Item>
                               </Menu>
@@ -276,6 +442,7 @@ const ESubCategory = () => {
           )}
         </section>
       </section>
+      <ToastContainer />
     </>
   );
 };
