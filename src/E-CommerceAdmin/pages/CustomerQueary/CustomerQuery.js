@@ -6,6 +6,8 @@ import HOC from "../../layout/HOC";
 import { Dropdown, Menu } from "antd";
 import BaseUrl from "../../../BaseUrl";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CustomerQuery = () => {
   //api calling
@@ -31,27 +33,25 @@ const CustomerQuery = () => {
     getProducts();
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     console.log("customer id", id);
 
-    const getProducts = async () => {
-      console.log("ls data ", localStorage.getItem("boon"));
-      let url = `${BaseUrl()}api/v1/help/delete/${id}`;
-      try {
-        const res = await axios.delete(url, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("boon")}`,
-          },
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    console.log("ls data ", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/help/delete/${id}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  useEffect(() => {
-    getProducts();
-  }, []);
 
   const [query, setQuery] = useState("");
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -104,7 +104,7 @@ const CustomerQuery = () => {
             className="tracking-widest text-slate-900 font-semibold uppercase"
             style={{ fontSize: "1.5rem" }}
           >
-            Help & Support (Total : {data?.length})
+            Customer Query (Total : {data?.length})
           </span>
         </div>
         <section className="sectionCont">
@@ -210,6 +210,7 @@ const CustomerQuery = () => {
           </div>
         </section>
       </section>
+      <ToastContainer />
     </>
   );
 };

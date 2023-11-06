@@ -18,19 +18,22 @@ const SellerProducts = () => {
   const [modalShow, setModalShow] = React.useState(false);
 
   //api calling
+
   const [product, setProduct] = useState([]);
   const getProducts = async () => {
     console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/products`;
+    console.log("login id", localStorage.getItem("ID"));
+    let url = `${BaseUrl()}api/v1/product/seller/${localStorage.getItem("ID")}`;
+
     try {
       const res = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log("product from shoes section", res.data.products);
-      setProduct(res.data.products);
-      console.log("admin product data", res.data.products);
+      console.log("product from shoes section", res.data);
+      setProduct(res.data);
+      console.log("admin product data", res.data);
     } catch (error) {
       console.log(error);
     }
@@ -64,8 +67,8 @@ const SellerProducts = () => {
   function MyVerticallyCenteredModal(props) {
     const [name, setName] = useState();
     const [description, setDescription] = useState();
-    const [color, setColor] = useState([]);
-    const [images, setImages] = useState([]);
+    const [color, setColor] = useState();
+    const [images, setImages] = useState();
     const [price, setPrice] = useState();
     const [features, setFeatures] = useState();
     const [categoryId, setCategoryId] = useState("");

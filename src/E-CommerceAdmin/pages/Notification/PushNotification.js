@@ -12,18 +12,68 @@ import {
 import { Dropdown, Menu } from "antd";
 import HOC from "../../layout/HOC";
 import BreadCamp from "../Component/BreadCamp";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const PushNotification = () => {
   const [modalShow, setModalShow] = React.useState(false);
-  const [edit, setEdit] = useState(false);
-  const data = [
-    {
-      name: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content",
-    },
-    {
-      name: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content",
-    },
-  ];
+  const [modelEdit, setModelEdit] = useState(false);
+  const [id, setId] = useState("");
+  const [massage, setMassage] = useState("");
+  // const data = [
+  //   {
+  //     name: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content",
+  //   },
+  //   {
+  //     name: "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content",
+  //   },
+  // ];
+
+  //api calling
+  const [data, setData] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/notify`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("product from shoes section", res.data.message);
+      setData(res.data.message);
+      console.log("admin product data", res.data.message);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  //handle delete
+  //delete api api/v1/product/
+  const handleDelete = async (id) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/notify/delete/${id}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -35,7 +85,9 @@ const PushNotification = () => {
   let pages2 = [];
 
   const TotolData = query
-    ? data?.filter((i) => i?.name?.toLowerCase().includes(query?.toLowerCase()))
+    ? data?.filter((i) =>
+        i?.message?.toLowerCase().includes(query?.toLowerCase())
+      )
     : data;
 
   useEffect(() => {
@@ -61,6 +113,32 @@ const PushNotification = () => {
   }
 
   function MyVerticallyCenteredModal(props) {
+    const [massagePost, setMassagePost] = useState("");
+
+    const handlePost = async (e) => {
+      e.preventDefault();
+      const formdata = new FormData();
+      formdata.append("message", massagePost);
+
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/notify`;
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Data is create successfully", res.data);
+        toast("Data is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -70,17 +148,93 @@ const PushNotification = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {edit ? "Edit" : "Add"} Notification
+            {"Add"} Notification
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form onSubmit={handlePost}>
             <Form.Group className="mb-3">
               <Form.Label>Notification</Form.Label>
               <FloatingLabel controlId="floatingTextarea2">
                 <Form.Control
                   as="textarea"
                   placeholder="Leave a comment here"
+                  row={3}
+                  style={{ height: "100px" }}
+                  value={massagePost}
+                  onChange={(e) => setMassagePost(e.target.value)}
+                />
+              </FloatingLabel>
+            </Form.Group>
+
+            <Button
+              style={{ backgroundColor: "#19376d", borderRadius: "0" }}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  const handleEdit = (i) => {
+    setId(i._id);
+    setMassage(i.message);
+    setModelEdit(true);
+  };
+
+  function MyVerticallyCenteredModalEdit(props) {
+    const [mass, setMass] = useState(massage);
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      const formdata = new FormData();
+      formdata.append("message", mass);
+
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/notify/get/${id}`;
+      try {
+        const res = await axios.put(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("put category data", res.data);
+        toast("Data is Edit successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setModelEdit(false);
+        getProducts();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    return (
+      <Modal
+        {...props}
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {" "}
+            {"Edit"} Notification
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Notification</Form.Label>
+              <FloatingLabel controlId="floatingTextarea2">
+                <Form.Control
+                  as="textarea"
+                  row={3}
+                  placeholder="Leave a comment here"
+                  value={mass}
+                  onChange={(e) => setMass(e.target.value)}
                   style={{ height: "100px" }}
                 />
               </FloatingLabel>
@@ -104,8 +258,12 @@ const PushNotification = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+      <MyVerticallyCenteredModalEdit
+        show={modelEdit}
+        onHide={() => setModelEdit(false)}
+      />
 
-      <BreadCamp name='Notification' />
+      <BreadCamp name="Notification" />
 
       <div
         className="pb-4   w-full flex justify-between items-center"
@@ -119,7 +277,6 @@ const PushNotification = () => {
         </span>
         <button
           onClick={() => {
-            setEdit(false);
             setModalShow(true);
           }}
           className="md:py-2 px-3 md:px-4 py-1 rounded-sm  bg-[#19376d] text-white tracking-wider"
@@ -157,7 +314,7 @@ const PushNotification = () => {
                   {slicedData.map((i, index) => (
                     <tr key={index}>
                       <td> #{index + 1} </td>
-                      <td> {i.name} </td>
+                      <td> {i.message} </td>
                       <td>
                         <Dropdown
                           overlay={
@@ -166,8 +323,7 @@ const PushNotification = () => {
                                 <div
                                   className="two_Sec_Div"
                                   onClick={() => {
-                                    setEdit(true);
-                                    setModalShow(true);
+                                    handleEdit(i);
                                   }}
                                 >
                                   <i className="fa-solid fa-pen-to-square"></i>
@@ -178,7 +334,10 @@ const PushNotification = () => {
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p>Delete </p>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    {" "}
+                                    Delete{" "}
+                                  </p>
                                 </div>
                               </Menu.Item>
                             </Menu>
@@ -241,6 +400,7 @@ const PushNotification = () => {
           </>
         )}
       </section>
+      <ToastContainer />
     </>
   );
 };

@@ -9,9 +9,7 @@ import axios from "axios";
 
 const EAdminDelivery = () => {
   const [modalShow, setModalShow] = React.useState(false);
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [whatPhone, setWhatPhone] = useState("");
+  const [id, setId] = useState("");
 
   // const data = [
   //   {
@@ -55,8 +53,9 @@ const EAdminDelivery = () => {
   const TotolData = query
     ? data?.filter(
         (i) =>
-          i?.name?.toLowerCase().includes(query?.toLowerCase()) ||
-          i?.email?.toLowerCase().includes(query?.toLowerCase())
+          i?.order?.toLowerCase().includes(query?.toLowerCase()) ||
+          i?.seller?.toLowerCase().includes(query?.toLowerCase()) ||
+          i?.issueType.toLowerCase().includes(query?.toLowerCase())
       )
     : data;
 
@@ -82,37 +81,36 @@ const EAdminDelivery = () => {
     }
   }
 
+  const handleReplySupport = (id) => {
+    setId(id);
+    setModalShow(true);
+  };
+
   function MyVerticallyCenteredModal(props) {
-    const handleSubmit = (e) => {
+    const [reply, setReply] = useState("");
+
+    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      const getProducts = async () => {
-        console.log("ls", localStorage.getItem("boon"));
-        let url = `${BaseUrl()}api/v1/support`;
-        try {
-          const res = await axios.post(
-            url,
-            {
-              email,
-              phone,
-              whatPhone,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("boon")}`,
-              },
-            }
-          );
+      const formdata = new FormData();
+      formdata.append("reply", reply);
 
-          console.log("admin support data", res.data.supports);
-        } catch (error) {
-          console.log(error);
-        }
-      };
+      console.log("ls", localStorage.getItem("boon"));
+      console.log("token", localStorage.getItem("boon"));
+
+      let url = `${BaseUrl()}api/v1/support/reply/${id}`;
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        window.alert("post request is successful");
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
     };
-    useEffect(() => {
-      getProducts();
-    }, []);
 
     return (
       <Modal
@@ -123,37 +121,18 @@ const EAdminDelivery = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            Add Help & Support
+            Reply Help & Support
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
-              <Form.Label>Email Address</Form.Label>
+              <Form.Label>Admin Reply</Form.Label>
               <Form.Control
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Mobile Number</Form.Label>
-              <Form.Control
-                type="tel"
-                pattern="[0-9]{10}"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Whatsapp Number</Form.Label>
-              <Form.Control
-                type="tel"
-                pattern="[0-9]{10}"
-                value={whatPhone}
-                onChange={(e) => setWhatPhone(e.target.value)}
+                as="textarea"
+                rows={3}
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
                 required
               />
             </Form.Group>
@@ -190,15 +169,6 @@ const EAdminDelivery = () => {
           >
             Help & Support (Total : {data?.length})
           </span>
-
-          <button
-            onClick={() => {
-              setModalShow(true);
-            }}
-            className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
-          >
-            Add Help & Support
-          </button>
         </div>
         <section className="sectionCont">
           <div className="filterBox">
@@ -209,6 +179,7 @@ const EAdminDelivery = () => {
             <input
               type="search"
               placeholder="Start typing to search for Customers"
+              value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
@@ -217,9 +188,12 @@ const EAdminDelivery = () => {
               <thead>
                 <tr>
                   <th>Number</th>
-                  <th>Email Address</th>
-                  <th>Mobile Number</th>
-                  <th>Whatsapp Number</th>
+                  <th>Image</th>
+                  <th>CallbackNumber</th>
+                  <th>IssueType</th>
+                  <th>IssueDescription</th>
+                  <th>OrderId</th>
+                  <th>SellerId</th>
                   <th></th>
                 </tr>
               </thead>
@@ -227,9 +201,18 @@ const EAdminDelivery = () => {
                 {slicedData?.map((i, index) => (
                   <tr key={index}>
                     <td> #{index + 1} </td>
-                    <td> {i.email} </td>
-                    <td> {i.mobile} </td>
-                    <td> {i.whatsapp} </td>
+                    <td>
+                      <img
+                        src={i?.images?.[0]}
+                        alt=""
+                        style={{ width: "60px" }}
+                      />
+                    </td>
+                    <td> {i.callbackNumber} </td>
+                    <td> {i.issueType} </td>
+                    <td> {i.issueDescription} </td>
+                    <td> {i.order} </td>
+                    <td> {i.seller} </td>
                     <td>
                       <Dropdown
                         overlay={
@@ -238,18 +221,13 @@ const EAdminDelivery = () => {
                               <div
                                 className="two_Sec_Div"
                                 onClick={() => {
-                                  setModalShow(true);
+                                  // setModalShow(true);
+                                  handleReplySupport(i._id);
                                 }}
                               >
                                 <i className="fa-solid fa-pen-to-square"></i>
 
-                                <p>Edit </p>
-                              </div>
-                            </Menu.Item>
-                            <Menu.Item key="3">
-                              <div className="two_Sec_Div">
-                                <i className="fa-sharp fa-solid fa-trash"></i>
-                                <p>Delete </p>
+                                <p>Reply Help & Support </p>
                               </div>
                             </Menu.Item>
                           </Menu>

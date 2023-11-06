@@ -5,20 +5,64 @@ import HOC from "../../layout/HOC";
 import { Dropdown, Menu } from "antd";
 import { Link } from "react-router-dom";
 import BreadCamp from "../Component/BreadCamp";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EVendorList = () => {
-  const data = [
-    {
-      fullName: "Full Name",
-      displayName: "Display Name",
-      storeName: "Store Name",
-      storeAddress: "Store Address",
-      email: "Email@gmail.com",
-      phone: "7896541236",
-      GST: "GSTNumber",
-      Pan: "PANNumber",
-    },
-  ];
+  // const data = [
+  //   {
+  //     fullName: "Full Name",
+  //     displayName: "Display Name",
+  //     storeName: "Store Name",
+  //     storeAddress: "Store Address",
+  //     email: "Email@gmail.com",
+  //     phone: "7896541236",
+  //     GST: "GSTNumber",
+  //     Pan: "PANNumber",
+  //   },
+  // ];
+
+  //  api calling single data
+  const [data, setData] = useState([]);
+  const getProducts = async () => {
+    console.log("ls data golu ", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/all`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setData(res.data.data);
+      console.log("admin support data", res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  //delete data
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(`${BaseUrl()}delete/seller/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -32,8 +76,8 @@ const EVendorList = () => {
   const TotolData = query
     ? data?.filter(
         (i) =>
-          i?.fullName?.toLowerCase().includes(query?.toLowerCase()) ||
-          i?.displayName?.toLowerCase().includes(query?.toLowerCase()) ||
+          i?.name?.toLowerCase().includes(query?.toLowerCase()) ||
+          // i?.number?.toLowerCase().includes(query?.toLowerCase()) ||
           i?.email?.toLowerCase().includes(query?.toLowerCase())
       )
     : data;
@@ -87,6 +131,7 @@ const EVendorList = () => {
               />
               <input
                 type="search"
+                value={query}
                 placeholder="Start typing to search for Customers"
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -98,13 +143,11 @@ const EVendorList = () => {
                   <tr>
                     <th>SNo.</th>
                     <th>Full Name</th>
-                    <th>Display Name</th>
-                    <th>Store Name</th>
-                    <th>Store Address</th>
+
                     <th>Email Address</th>
                     <th>Phone Number</th>
-                    <th>GST</th>
-                    <th>PAN Number</th>
+
+                    <th>Role</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -112,14 +155,11 @@ const EVendorList = () => {
                   {slicedData?.map((i, index) => (
                     <tr key={index}>
                       <td>#{index + 1} </td>
-                      <td> {i.fullName} </td>
-                      <td> {i.displayName} </td>
-                      <td> {i.storeName} </td>
-                      <td> {i.storeAddress} </td>
+                      <td> {i.name} </td>
+
                       <td> {i.email} </td>
-                      <td> {i.phone} </td>
-                      <td> {i.GST} </td>
-                      <td> {i.Pan} </td>
+                      <td> {i.number} </td>
+                      <td> {i.role} </td>
 
                       <td>
                         <Dropdown
@@ -128,7 +168,7 @@ const EVendorList = () => {
                               <Menu.Item key="2">
                                 <div className="two_Sec_Div">
                                   <i className="fa-solid fa-eye"></i>
-                                  <Link to={`/seller/product/${i.fullName}`}>
+                                  <Link to={`/seller/product/${i._id}`}>
                                     <p>View Product</p>
                                   </Link>
                                 </div>
@@ -136,7 +176,9 @@ const EVendorList = () => {
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p>Delete</p>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    Delete
+                                  </p>
                                 </div>
                               </Menu.Item>
                             </Menu>
@@ -202,6 +244,7 @@ const EVendorList = () => {
           </>
         )}
       </section>
+      <ToastContainer />
     </>
   );
 };

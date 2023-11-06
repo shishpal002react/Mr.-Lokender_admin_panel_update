@@ -15,6 +15,8 @@ const ESubCategory = () => {
   //edit product
   const [id, setId] = useState("");
   const [nameEdit, setNameEdit] = useState("");
+  const [catId, setCateId] = useState("");
+  const [catName, setCatName] = useState("");
 
   //api calling
   const [subCategory, setSubCategory] = useState([]);
@@ -43,7 +45,7 @@ const ESubCategory = () => {
   const handleDelete = async (id) => {
     console.log(id);
     console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/admin/delete/sub/Category${id}`;
+    let url = `${BaseUrl()}api/v1/admin/delete/sub/Category/${id}`;
     try {
       const res = await axios.delete(url, {
         headers: {
@@ -209,14 +211,39 @@ const ESubCategory = () => {
     setId(i._id);
     setModalShowEdit(true);
     setNameEdit(i.name);
+    setCateId(i.categoryId._id);
+    setCatName(i.categoryId.name);
   };
 
   function MyVerticallyCenteredModalEdit(props) {
     const [name, setName] = useState(nameEdit);
-    const [subCategoryId, setSubcategory] = useState("");
+    const [subCategoryId, setSubcategory] = useState(modalShowEdit);
     const [data, setDate] = useState([]);
+    const [image, setImage] = useState();
 
-    //category data
+    const putRequest = async (e) => {
+      e.preventDefault();
+      const formdata = new FormData();
+      formdata.append("name", name);
+      formdata.append("image", image);
+      formdata.append("categoryId", subCategoryId);
+      let url = `${BaseUrl()}api/v1/admin/updatesubcategory/${id}`;
+      try {
+        const res = await axios.put(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        toast("Data is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShowEdit(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const subCategoryData = async () => {
       let url = `${BaseUrl()}api/v1/admin/allCategory`;
       try {
@@ -233,12 +260,11 @@ const ESubCategory = () => {
     };
 
     useEffect(() => {
-      console.log("dsada");
       if (props.show === true) {
         subCategoryData();
       }
     }, [props]);
-    console.log(id, "id is define");
+
     return (
       <Modal
         {...props}
@@ -253,7 +279,7 @@ const ESubCategory = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form onSubmit={putRequest}>
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -262,8 +288,19 @@ const ESubCategory = () => {
                 onChange={(e) => setName(e.target.value)}
               />
             </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Image</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e) => setImage(e.target.files[0])}
+              />
+            </Form.Group>
 
-            <Form.Select aria-label="Default select example" className="mb-3">
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setSubcategory(e.target.value)}
+            >
               <option>-- Select Category --</option>
               {data &&
                 data?.map((item) => (

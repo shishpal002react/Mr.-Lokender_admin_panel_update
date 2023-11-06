@@ -5,100 +5,113 @@ import { Alert, Table } from "react-bootstrap";
 import HOC from "../../layout/HOC";
 import { Dropdown, Menu } from "antd";
 import BreadCamp from "../Component/BreadCamp";
+import BaseUrl from "./../../../BaseUrl";
+import axios from "axios";
 
-const data = [
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
+// const data = [
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
 
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-  {
-    img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
-    fName: "Arpan",
-    lName: "Malik",
-    Gender: "Identify as toast",
-    email: "arpanmalik@gmail.com",
-    mobile: "9874563214",
-  },
-];
-// api is implemented
-  //api show catogery is calling
-  // const [customer, setCustomer] = useState([]);
-  // const getProducts = async() => {
-  //   console.log("ls",(localStorage.getItem("boon")))
-  //   let url = `${Baseurl()}api/v1/product/${id}`;
-  //   try {
-  //     const res = await axios.get(url, {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem("boon")}`,
-  //       },
-  //     });
-  //     console.log("product from shoes section",res.data.products);
-  //     setCategory(res.data.products);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
-  
-
-  // useEffect(() => {  
-  //   getProducts();    
-  // }, [id]);
-
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+//   {
+//     img: "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg",
+//     fName: "Arpan",
+//     lName: "Malik",
+//     Gender: "Identify as toast",
+//     email: "arpanmalik@gmail.com",
+//     mobile: "9874563214",
+//   },
+// ];
 
 const EAdminCustomer = () => {
+  //api calling
+  const [data, setData] = useState([]);
+  const getProducts = async () => {
+    console.log("ls data ", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/all/user`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setData(res.data);
+      console.log("admin support data", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await axios.delete(`${BaseUrl()}api/v1/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const [query, setQuery] = useState("");
   const [currentPage2, setCurrentPage2] = useState(1);
   const [postPerPage2] = useState(10);
@@ -109,9 +122,9 @@ const EAdminCustomer = () => {
   const TotolData = query
     ? data?.filter(
         (i) =>
-          i?.fName?.toLowerCase().includes(query?.toLowerCase()) ||
-          i?.lName?.toLowerCase().includes(query?.toLowerCase()) ||
-          i?.email?.toLowerCase().includes(query?.toLowerCase())
+          i?.name?.toLowerCase().includes(query?.toLowerCase()) ||
+          i?.email?.toLowerCase().includes(query?.toLowerCase()) ||
+          i?.role?.toLowerCase().includes(query?.toLowerCase())
       )
     : data;
 
@@ -164,6 +177,7 @@ const EAdminCustomer = () => {
               />
               <input
                 type="search"
+                value={query}
                 placeholder="Start typing to search for Customers"
                 onChange={(e) => setQuery(e.target.value)}
               />
@@ -174,12 +188,9 @@ const EAdminCustomer = () => {
                 <thead>
                   <tr>
                     <th>SNo.</th>
-                    <th>Avatar</th>
+                    <th>Image</th>
                     <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Gender</th>
-                    <th>Email Address</th>
-                    <th>Mobile Number</th>
+                    <th>Role</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -189,7 +200,7 @@ const EAdminCustomer = () => {
                       <td>#{index + 1} </td>
                       <td>
                         <img
-                          src={i.img}
+                          src={i.image}
                           alt=""
                           style={{
                             width: "60px",
@@ -198,11 +209,8 @@ const EAdminCustomer = () => {
                           }}
                         />
                       </td>
-                      <td> {i.fName} </td>
-                      <td> {i.lName} </td>
-                      <td> {i.Gender} </td>
-                      <td> {i.email} </td>
-                      <td> {i.mobile} </td>
+                      <td> {i.name} </td>
+                      <td>{i.role}</td>
                       <td>
                         <Dropdown
                           overlay={
@@ -210,7 +218,9 @@ const EAdminCustomer = () => {
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p>Delete</p>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    Delete
+                                  </p>
                                 </div>
                               </Menu.Item>
                             </Menu>

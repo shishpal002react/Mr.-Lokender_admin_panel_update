@@ -6,7 +6,7 @@ import { AiOutlineMail } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Oval } from "react-loader-spinner";
 import { Alert } from "react-bootstrap";
-import { Store } from 'react-notifications-component';
+import { Store } from "react-notifications-component";
 import BaseUrl from "../../BaseUrl";
 import axios from "axios";
 
@@ -16,24 +16,24 @@ const SellerLogin = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [email,setEmail] =useState("");
-  const [password,setPassword]=useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const data={
-    email:email,
-    password:password
-
-  }
+  const data = {
+    email: email,
+    password: password,
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
     let url = `${BaseUrl()}api/v1/login/seller`;
     try {
-      console.log("senddata",data)
+      console.log("senddata", data);
       const res = await axios.post(url, data);
-      console.log("post seller data",res)
+      console.log("post seller data", res);
       localStorage.setItem("token", res.data.data);
+      localStorage.setItem("ID", res.data.user._id);
       navigate("/sellerDashboard");
       Store.addNotification({
         title: "Login Success",
@@ -45,8 +45,8 @@ const SellerLogin = () => {
         animationOut: ["animate__animated", "animate__fadeOut"],
         dismiss: {
           duration: 2000,
-          onScreen: true
-        }
+          onScreen: true,
+        },
       });
       setLoading(false);
     } catch (err) {
@@ -80,7 +80,7 @@ const SellerLogin = () => {
                 placeholder="admin@gmail.com"
                 required
                 value={email}
-                onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 className="outline-none px-0.5  bg-transparent tracking-wider w-full"
               />
               <AiOutlineMail className="text-xl " />
@@ -92,7 +92,7 @@ const SellerLogin = () => {
                 name="password"
                 required
                 value={password}
-                onChange={(e)=>setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 className="outline-none px-0.5  bg-transparent tracking-wider w-full  "
               />
 

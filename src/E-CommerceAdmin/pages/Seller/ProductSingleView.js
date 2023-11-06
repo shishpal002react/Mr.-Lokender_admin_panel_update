@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import BaseUrl from "../../../BaseUrl";
 import axios from "axios";
-const ViewProduct = () => {
+const ProductSingleView = () => {
   const { id } = useParams();
 
   //api calling
@@ -95,12 +95,12 @@ const ViewProduct = () => {
               ))}
             </div>
             {/* <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-            <p>
-              {" "}
-              <strong>Seller Name</strong> :
-            </p>{" "}
-            <p>Seller Name</p>
-          </div> */}
+              <p>
+                {" "}
+                <strong>Seller Name</strong> :
+              </p>{" "}
+              <p>Seller Name</p>
+            </div> */}
             <div className="two_Sec" style={{ alignItems: "flex-start" }}>
               <p>
                 <strong>Brand Name</strong> :
@@ -114,4 +114,4 @@ const ViewProduct = () => {
   );
 };
 
-export default HOC(ViewProduct);
+export default HOC(ProductSingleView);

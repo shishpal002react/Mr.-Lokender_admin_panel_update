@@ -9,14 +9,16 @@ import { Link } from "react-router-dom";
 import BreadCamp from "../Component/BreadCamp";
 import axios from "axios";
 import BaseUrl from "../../../BaseUrl";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EProduct = () => {
   const [query, setQuery] = useState("");
 
   //api calling
   const [product, setProduct] = useState([]);
-  const getProducts = async() => {
-    console.log("ls",(localStorage.getItem("token")))
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
     let url = `${BaseUrl()}api/v1/products`;
     try {
       const res = await axios.get(url, {
@@ -24,23 +26,22 @@ const EProduct = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log("product from shoes section",res.data.products);
+      console.log("product from shoes section", res.data.products);
       setProduct(res.data.products);
-      console.log("admin product data",res.data.products)
+      console.log("admin product data", res.data.products);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-  
+  };
 
-  useEffect(() => {  
-    getProducts();    
+  useEffect(() => {
+    getProducts();
   }, []);
 
   //delete api api/v1/product/
-  const handleDelete=async(id)=>{
-   console.log(id);
-    console.log("ls",(localStorage.getItem("token")))
+  const handleDelete = async (id) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
     let url = `${BaseUrl()}api/v1/product/${id}`;
     try {
       const res = await axios.delete(url, {
@@ -48,11 +49,14 @@ const EProduct = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      getProducts(); 
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   // Pagination
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -97,7 +101,7 @@ const EProduct = () => {
 
   return (
     <>
-      <BreadCamp name='Products' />
+      <BreadCamp name="Products" />
 
       <div
         className="pb-4  w-full flex justify-between items-center"
@@ -135,13 +139,12 @@ const EProduct = () => {
                     <th>Sno.</th>
                     <th>Image</th>
                     <th>Title</th>
-                    <th>Reviews</th>
                     <th>Discount</th>
                     <th>Total Stock</th>
                     <th>Price</th>
                     <th>Discounted Price</th>
-                    <th>Seller Name</th>
-                    <th>Seller Store</th>
+                    <th>Brand Name</th>
+
                     <th> </th>
                   </tr>
                 </thead>
@@ -150,16 +153,18 @@ const EProduct = () => {
                     <tr key={index}>
                       <td> {index + 1} </td>
                       <td>
-                        <img src={i.img} alt="" style={{ width: "60px" }} />
+                        <img
+                          src={i?.images?.[0]}
+                          alt=""
+                          style={{ width: "60px" }}
+                        />
                       </td>
                       <td>{i.name}</td>
-                      <td>{i.review}</td>
-                      <td>{i.isDiscount}</td>
+                      <td>{i.discountAmount}</td>
                       <td>{i.stock}</td>
                       <td>{i.price}</td>
                       <td>{i.discountedPrice}</td>
-                      <td>{i.sellerName}</td>
-                      <td>{i.storeName}</td>
+                      <td>{i.brand}</td>
 
                       <td style={{ textAlign: "center" }}>
                         <Dropdown
@@ -176,7 +181,9 @@ const EProduct = () => {
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p onClick={()=>handleDelete(i._id)}>Delete</p>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    Delete
+                                  </p>
                                 </div>
                               </Menu.Item>
                             </Menu>
@@ -241,6 +248,7 @@ const EProduct = () => {
           </>
         )}
       </section>
+      <ToastContainer />
     </>
   );
 };

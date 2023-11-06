@@ -4,11 +4,13 @@ import { Table } from "react-bootstrap";
 import SpinnerComp from "../Component/SpinnerComp";
 import { Dropdown, Menu } from "antd";
 import { Link, useParams } from "react-router-dom";
-import BaseUrl from "../../../BaseUrl";
+import BaseUrl from "./../../../BaseUrl";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SellerProducts = () => {
-  const { name } = useParams();
+  const { id } = useParams();
   const [query, setQuery] = useState("");
 
   // const data = [
@@ -61,19 +63,20 @@ const SellerProducts = () => {
   //   },
   // ];
 
-  //api calling
-  const [seller, setSeller] = useState("");
+  //api
+  const [seller, setSeller] = useState([]);
   const getProducts = async () => {
-    console.log("ls", localStorage.getItem("boon"));
-    let url = `${BaseUrl()}api/v1/all`;
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/products`;
     try {
       const res = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("boon")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setSeller(res.data.data);
-      console.log(res.data.data);
+      console.log("product from shoes section", res.data.products);
+      setSeller(res.data.products);
+      console.log("admin product data", res.data.products);
     } catch (error) {
       console.log(error);
     }
@@ -82,6 +85,26 @@ const SellerProducts = () => {
   useEffect(() => {
     getProducts();
   }, []);
+
+  //delete api api/v1/product/
+  const handleDelete = async (id) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/product/${id}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Pagination
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -127,7 +150,7 @@ const SellerProducts = () => {
   return (
     <>
       <p className="headP">
-        <Link to="/dashboard">Dashboard</Link> / {name} / Product{" "}
+        <Link to="/dashboard">Dashboard</Link> / Product{" "}
       </p>
 
       <div
@@ -138,7 +161,7 @@ const SellerProducts = () => {
           className="tracking-widest text-slate-900 font-semibold uppercase"
           style={{ fontSize: "1.5rem" }}
         >
-          All {name} Product's ( Total : {seller?.length} )
+          All Seller Product's ( Total : {seller?.length} )
         </span>
       </div>
 
@@ -179,7 +202,7 @@ const SellerProducts = () => {
                     <tr key={index}>
                       <td> {index + 1} </td>
                       <td>
-                        <img src={i.img} alt="" style={{ width: "60px" }} />
+                        <img src={i.image} alt="" style={{ width: "60px" }} />
                       </td>
                       <td>{i.name}</td>
                       <td>{i.review}</td>
@@ -194,7 +217,7 @@ const SellerProducts = () => {
                               <Menu.Item key="2">
                                 <div className="two_Sec_Div">
                                   <i className="fa-solid fa-eye"></i>
-                                  <Link to={`/product/${i.name}`}>
+                                  <Link to={`/seller/single/product/${i._id}`}>
                                     <p>View Product</p>
                                   </Link>
                                 </div>
@@ -202,7 +225,9 @@ const SellerProducts = () => {
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p>Delete Product</p>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    Delete Product
+                                  </p>
                                 </div>
                               </Menu.Item>
                             </Menu>
@@ -267,6 +292,7 @@ const SellerProducts = () => {
           </>
         )}
       </section>
+      <ToastContainer />
     </>
   );
 };

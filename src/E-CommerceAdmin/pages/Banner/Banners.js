@@ -60,9 +60,8 @@ const Banners = () => {
 
       const formdata = new FormData();
       formdata.append("image", file);
-      formdata.append("name", name);
 
-      let url = `${BaseUrl()}/api/v1/banner/offers456`;
+      let url = `${BaseUrl()}api/v1/banner/${name}`;
       try {
         const res = await axios.post(url, formdata, {
           headers: {

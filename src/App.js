@@ -22,11 +22,12 @@ import "react-notifications-component/dist/theme.css";
 import SellerLogin from "./SellerPanel/forms/SellerLogin";
 import SellerDashboard from "./SellerPanel/pages/Dashboard/SellerDashboard";
 import SellerCategory from "./SellerPanel/pages/Category/SellerCategory";
-import SellerPanelProducts from './SellerPanel/pages/Products/SellerPanelProducts'
+import SellerPanelProducts from "./SellerPanel/pages/Products/SellerPanelProducts";
 import SellerViewProduct from "./SellerPanel/pages/Products/SellerViewProduct";
 import SellerSubCategory from "./SellerPanel/pages/SubCategory/SellerSubCategory";
 import SellerOrders from "./SellerPanel/pages/Orders/sellerOrders";
 import CustomerQuery from "./E-CommerceAdmin/pages/CustomerQueary/CustomerQuery";
+import ProductSingleView from "./E-CommerceAdmin/pages/Seller/ProductSingleView";
 
 function App() {
   return (
@@ -48,15 +49,22 @@ function App() {
         <Route path="/Orders" element={<EAdminOrders />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
-        <Route path="/seller/product/:name" element={<SellerProducts />} />
+        <Route path="/seller/product/:id" element={<SellerProducts />} />
+        <Route
+          path="/seller/single/product/:id"
+          element={<ProductSingleView />}
+        />
         <Route path="/customerquery" element={<CustomerQuery />} />
-        
+
         {/* Selller */}
         <Route path="/sellerLogin" element={<SellerLogin />} />
         <Route path="/sellerDashboard" element={<SellerDashboard />} />
         <Route path="/sellerCategory" element={<SellerCategory />} />
         <Route path="/SellerProducts" element={<SellerPanelProducts />} />
-        <Route path="/SellerProducts/product/:name" element={<SellerViewProduct />} />
+        <Route
+          path="/SellerProducts/product/:name"
+          element={<SellerViewProduct />}
+        />
         <Route path="/seller/subCategory" element={<SellerSubCategory />} />
         <Route path="/seller/orders" element={<SellerOrders />} />
       </Routes>

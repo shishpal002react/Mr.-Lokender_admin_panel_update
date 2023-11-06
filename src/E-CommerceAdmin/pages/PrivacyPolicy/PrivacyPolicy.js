@@ -11,6 +11,8 @@ import {
   Alert,
 } from "react-bootstrap";
 import { Dropdown, Menu } from "antd";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
 
 const PrivacyPolicy = () => {
   const [modalShow, setModalShow] = React.useState(false);
@@ -28,6 +30,28 @@ const PrivacyPolicy = () => {
         "If you send us personal correspondence, such as emails or letters, or if other users or third parties send us correspondence about your activities or postings on the Platform, we may collect such information into a file specific to you.",
     },
   ];
+  //api calling
+  // const [data, setData] = useState({});
+  // const getProducts = async() => {
+  //   console.log("ls",(localStorage.getItem("token")))
+  //   let url = `${BaseUrl()}api/v1/privacy`;
+  //   try {
+  //     const res = await axios.get(url, {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //     });
+  //     console.log("product from shoes section",res.data.message);
+  //     setData(res.data.message);
+  //     console.log("admin product data",res.data.message)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   getProducts();
+  // }, []);
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
