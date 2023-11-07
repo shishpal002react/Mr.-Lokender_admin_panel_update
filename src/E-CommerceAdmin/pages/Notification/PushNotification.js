@@ -123,11 +123,17 @@ const PushNotification = () => {
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/notify`;
       try {
-        const res = await axios.post(url, formdata, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const res = await axios.post(
+          url,
+          {
+            message: massagePost,
           },
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         console.log("Data is create successfully", res.data);
         toast("Data is create successfully", {
           position: toast.POSITION.TOP_CENTER,
@@ -196,11 +202,17 @@ const PushNotification = () => {
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/notify/get/${id}`;
       try {
-        const res = await axios.put(url, formdata, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        const res = await axios.put(
+          url,
+          {
+            message: mass,
           },
-        });
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         console.log("put category data", res.data);
         toast("Data is Edit successfully", {
           position: toast.POSITION.TOP_CENTER,

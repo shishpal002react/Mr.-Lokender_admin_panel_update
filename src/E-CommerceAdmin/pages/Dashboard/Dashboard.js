@@ -1,16 +1,40 @@
 /** @format */
 
+import { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
 import { useNavigate } from "react-router-dom";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
+  const [data, setData] = useState();
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/total/counts`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("dashboard from data section", res.data);
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   const card = [
     {
       progress: "bg-green-400",
       title: "Total Customer's",
-      number: 20,
+      number: data?.totalUsers,
       icon: (
         <i
           className="fa-solid fa-user text-2xl"
@@ -23,7 +47,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "Total Seller's",
-      number: 50,
+      number: data?.totalSeller,
       icon: <i className="fa-solid fa-user-tie text-2xl text-[#29cccc]" />,
       bg: "#29cccc",
       link: "/VendorList",
@@ -31,7 +55,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total Product",
-      number: 60,
+      number: data?.totalProducts,
       icon: <i class="fa-solid fa-box text-2xl text-[#3c335d]"></i>,
       bg: "#3c335d",
       link: "/Product",
@@ -39,7 +63,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total category",
-      number: 30,
+      number: data?.totalCategories,
       icon: <i className=" fa-brands fa-slack text-2xl text-[#64878e]"></i>,
       bg: "#64878e",
       link: "/Category",
@@ -48,7 +72,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total subcategory",
-      number: 100,
+      number: data?.totalSubCategory,
       icon: (
         <i className=" fa-solid fa-layer-group text-2xl text-[#1b6975]"></i>
       ),
@@ -59,7 +83,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total Notification",
-      number: 100,
+      number: data?.totalnotify,
       icon: <i className=" fa-solid fa-envelope text-2xl text-[#659cca]"></i>,
       bg: "#659cca",
       link: "/pushNotification",
@@ -68,7 +92,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total Banner",
-      number: 100,
+      number: data?.totalBanner,
       icon: <i className=" fa-solid fa-image text-2xl text-[#6bb07e]"></i>,
       bg: "#6bb07e",
       link: "/banner",
@@ -77,7 +101,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total Coupon",
-      number: 100,
+      number: data?.totalCoupon,
       icon: <i className=" fa-solid fa-ticket text-2xl text-[#944f81]"></i>,
       bg: "#944f81 ",
       link: "/coupon",
@@ -85,7 +109,7 @@ const Dashboard = () => {
     {
       progress: "bg-green-400",
       title: "total Orders",
-      number: 100,
+      number: data?.totalOrder,
       icon: (
         <i className=" fa-solid fa-cart-shopping text-2xl text-[#637ce6]"></i>
       ),

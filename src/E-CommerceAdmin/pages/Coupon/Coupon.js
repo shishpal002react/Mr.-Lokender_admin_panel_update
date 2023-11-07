@@ -95,6 +95,37 @@ const Coupon = () => {
   };
 
   function MyVerticallyCenteredModal(props) {
+    const [couponCode, setCouponCode] = useState("");
+    const [expirationDate, setExpirationDate] = useState("");
+    const [activationDate, setActivationDate] = useState("");
+    const [discount, setDiscount] = useState("");
+    const [minOrder, setMinOrder] = useState("");
+
+    const postData = async (e) => {
+      e.preventDefault();
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/coupon`;
+      try {
+        const res = await axios.post(
+          url,
+          { couponCode, expirationDate, activationDate, discount, minOrder },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log("Data is create successfully", res.data);
+        toast("Data is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -108,37 +139,66 @@ const Coupon = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form onSubmit={postData}>
             <Form.Group className="mb-3">
               <Form.Label>Coupon Code</Form.Label>
-              <Form.Control type="text" required />
+              <Form.Control
+                type="text"
+                value={couponCode}
+                required
+                onChange={(e) => setCouponCode(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Discount</Form.Label>
-              <Form.Control type="number" min={0} required />
+              <Form.Control
+                type="number"
+                min={0}
+                required
+                value={discount}
+                onChange={(e) => setDiscount(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Starting Date</Form.Label>
-              <Form.Control type="date" required />
+              <Form.Control
+                type="date"
+                required
+                onChange={(e) => setActivationDate(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Valid Till</Form.Label>
-              <Form.Control type="date" required />
+              <Form.Control
+                type="date"
+                required
+                onChange={(e) => setExpirationDate(e.target.value)}
+              />
             </Form.Group>
-            <FloatingLabel
+            <Form.Group className="mb-3">
+              <Form.Label>Min Discount</Form.Label>
+              <Form.Control
+                type="number"
+                required
+                value={minOrder}
+                onChange={(e) => setMinOrder(e.target.value)}
+              />
+            </Form.Group>
+            {/* <FloatingLabel
               controlId="floatingTextarea2"
               label="Message"
               className="mb-3"
             >
               <Form.Control
-                as="textarea"
+                as="number"
                 placeholder="Leave a comment here"
                 style={{ height: "100px" }}
+                onChange={(e) => setCouponCode(e.target.value)}
               />
-            </FloatingLabel>
+            </FloatingLabel> */}
 
             <Button
               style={{ backgroundColor: "#19376d", borderRadius: "0" }}
@@ -153,11 +213,57 @@ const Coupon = () => {
   }
 
   const handlePutRequest = (i) => {
-    setId(i._id);
+    setId(i);
     setModelEdit(true);
   };
 
+  // console.log("data is print ", id);
+
   function MyVerticallyCenteredModalEdit(props) {
+    const [couponCode, setCouponCode] = useState();
+    const [expirationDate, setExpirationDate] = useState();
+    const [activationDate, setActivationDate] = useState();
+    const [discount, setDiscount] = useState();
+    const [minOrder, setMinOrder] = useState();
+    const [idput, setIdPut] = useState("");
+
+    console.log("data is print golu bhai", id);
+
+    useEffect(() => {
+      if (props.show === true) {
+        setCouponCode(id.couponCode);
+        setExpirationDate(id.validTill);
+        setActivationDate(id.activationDate);
+        setDiscount(id.discount);
+        setMinOrder(id.minOrder);
+        setIdPut(id._id);
+      }
+    }, [props]);
+
+    const putRequest = async (e) => {
+      e.preventDefault();
+      //put coupon api
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/coupon/update/${idput}`;
+      try {
+        const res = await axios.put(url, {
+          couponCode,
+          expirationDate,
+          activationDate,
+          discount,
+          minOrder,
+        });
+        console.log("Data is create successfully", res.data);
+        toast("Data is Edit successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -171,37 +277,61 @@ const Coupon = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form onSubmit={putRequest}>
             <Form.Group className="mb-3">
               <Form.Label>Coupon Code</Form.Label>
-              <Form.Control type="text" required />
+              <Form.Control
+                type="text"
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Discount</Form.Label>
-              <Form.Control type="number" min={0} required />
+              <Form.Control
+                type="number"
+                min={0}
+                value={discount}
+                onChange={(e) => setDiscount(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Starting Date</Form.Label>
-              <Form.Control type="date" required />
+              <Form.Control
+                type="date"
+                onChange={(e) => setActivationDate(e.target.value)}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>Valid Till</Form.Label>
-              <Form.Control type="date" required />
+              <Form.Control
+                type="date"
+                onChange={(e) => setExpirationDate(e.target.value)}
+              />
             </Form.Group>
-            <FloatingLabel
+            <Form.Group className="mb-3">
+              <Form.Label>Min Order</Form.Label>
+              <Form.Control
+                type="number"
+                value={minOrder}
+                onChange={(e) => setMinOrder(e.target.value)}
+              />
+            </Form.Group>
+            {/* <FloatingLabel
               controlId="floatingTextarea2"
               label="Message"
               className="mb-3"
             >
               <Form.Control
-                as="textarea"
+                as="number"
                 placeholder="Leave a comment here"
                 style={{ height: "100px" }}
+                onChange={(e) => setCouponCode(e.target.value)}
               />
-            </FloatingLabel>
+            </FloatingLabel> */}
 
             <Button
               style={{ backgroundColor: "#19376d", borderRadius: "0" }}

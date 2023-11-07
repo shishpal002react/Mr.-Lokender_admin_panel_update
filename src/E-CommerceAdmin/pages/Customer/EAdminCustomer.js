@@ -7,6 +7,8 @@ import { Dropdown, Menu } from "antd";
 import BreadCamp from "../Component/BreadCamp";
 import BaseUrl from "./../../../BaseUrl";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // const data = [
 //   {
@@ -102,10 +104,13 @@ const EAdminCustomer = () => {
 
   const handleDelete = async (id) => {
     try {
-      const res = await axios.delete(`${BaseUrl()}api/v1/`, {
+      const res = await axios.delete(`${BaseUrl()}api/v1/delete/user/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+      });
+      toast("Product delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
       });
     } catch (error) {
       console.log(error);
@@ -284,6 +289,7 @@ const EAdminCustomer = () => {
           </>
         )}
       </section>
+      <ToastContainer />
     </>
   );
 };

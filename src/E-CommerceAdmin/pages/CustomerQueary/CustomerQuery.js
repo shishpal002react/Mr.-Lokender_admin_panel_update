@@ -37,7 +37,7 @@ const CustomerQuery = () => {
     console.log("customer id", id);
 
     console.log("ls data ", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/help/delete/${id}`;
+    let url = `${BaseUrl()}api/v1/support/${id}`;
     try {
       const res = await axios.delete(url, {
         headers: {

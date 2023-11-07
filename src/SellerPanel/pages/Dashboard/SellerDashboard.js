@@ -1,16 +1,51 @@
 /** @format */
 
+import { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
 import { useNavigate } from "react-router-dom";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
 
 const SellerDashboard = () => {
   const navigate = useNavigate();
+  // const [totalUsers, setTotalUsers] = useState("");
+  // const [totalProducts, setTotalProducts] = useState("");
+  // const [totalCategories, setTotalCategories] = useState("");
+  // const [totalSubCategory, setTotalSubCategory] = useState("");
+  // const [totalnotify, setTotalnotify] = useState("");
+  // const [totalBanner, setTotalBanner] = useState("");
+  // const [totalCoupon, setTotalCoupon] = useState("");
+  // const [totalOrder, setTotalOrder] = useState("");
+  // const [totalSeller, setTotalSeller] = useState("");
+
+  const [data, setData] = useState();
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/total/counts/seller/${localStorage.getItem(
+      "ID"
+    )}`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      console.log("dashboard from seller section", res.data);
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   const card = [
     {
       progress: "bg-green-400",
       title: "total Product",
-      number: 60,
+      number: data?.totalProducts,
       icon: <i class="fa-solid fa-box text-2xl text-[#3c335d]"></i>,
       bg: "#3c335d",
       link: "/SellerProducts",
@@ -18,7 +53,7 @@ const SellerDashboard = () => {
     {
       progress: "bg-green-400",
       title: "total category",
-      number: 30,
+      number: data?.totalCategories,
       icon: <i className=" fa-brands fa-slack text-2xl text-[#64878e]"></i>,
       bg: "#64878e",
       link: "/sellerCategory",
@@ -27,18 +62,17 @@ const SellerDashboard = () => {
     {
       progress: "bg-green-400",
       title: "total subcategory",
-      number: 100,
+      number: data?.totalSubCategory,
       icon: (
         <i className=" fa-solid fa-layer-group text-2xl text-[#1b6975]"></i>
       ),
       bg: "#1b6975",
       link: "/seller/subCategory",
     },
-
     {
       progress: "bg-green-400",
       title: "total Orders",
-      number: 100,
+      number: data?.totalOrder,
       icon: (
         <i className=" fa-solid fa-cart-shopping text-2xl text-[#637ce6]"></i>
       ),

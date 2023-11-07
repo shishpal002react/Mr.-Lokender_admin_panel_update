@@ -33,11 +33,7 @@ const Banners = () => {
     console.log("ls", localStorage.getItem("token"));
     let url = `${BaseUrl()}api/v1/banner`;
     try {
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await axios.get(url);
       console.log("product from shoes section", res.data.banners);
       setData(res.data.banners);
       console.log("admin product data", res.data.banners);
@@ -63,11 +59,7 @@ const Banners = () => {
 
       let url = `${BaseUrl()}api/v1/banner/${name}`;
       try {
-        const res = await axios.post(url, formdata, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await axios.post(url, formdata);
         console.log("Banner is create successfully", res.data);
         toast("Data is create successfully", {
           position: toast.POSITION.TOP_CENTER,
@@ -139,11 +131,7 @@ const Banners = () => {
     console.log("ls", localStorage.getItem("token"));
     let url = `${BaseUrl()}api/v1/banner/${id}`;
     try {
-      const res = await axios.delete(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await axios.delete(url);
       getProducts();
       toast("Data is Delete successfully", {
         position: toast.POSITION.TOP_CENTER,
