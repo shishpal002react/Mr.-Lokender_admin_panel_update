@@ -37,13 +37,9 @@ const CustomerQuery = () => {
     console.log("customer id", id);
 
     console.log("ls data ", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/support/${id}`;
+    let url = `${BaseUrl()}api/v1/help/delete/${id}`;
     try {
-      const res = await axios.delete(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await axios.delete(url);
       toast("Data is Delete successfully", {
         position: toast.POSITION.TOP_CENTER,
       });

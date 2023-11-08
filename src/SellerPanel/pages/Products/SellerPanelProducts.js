@@ -65,9 +65,9 @@ const SellerProducts = () => {
 
   // post request
   function MyVerticallyCenteredModal(props) {
-    const [name, setName] = useState();
-    const [description, setDescription] = useState();
-    const [color, setColor] = useState();
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [color, setColor] = useState("");
     const [images, setImages] = useState();
     const [price, setPrice] = useState();
     const [features, setFeatures] = useState();
@@ -94,7 +94,6 @@ const SellerProducts = () => {
       formdata.append("stock", stock);
       formdata.append("brand", brand);
       formdata.append("simType", simType);
-      formdata.append("name", name);
 
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/product/new`;
@@ -109,6 +108,7 @@ const SellerProducts = () => {
           position: toast.POSITION.TOP_CENTER,
         });
         setModalShow(false);
+        getProducts();
       } catch (error) {
         console.log(error);
       }
@@ -168,7 +168,7 @@ const SellerProducts = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {"Add Category"}
+            {"Add Product Category"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -177,7 +177,6 @@ const SellerProducts = () => {
               <Form.Label>Product Name</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -186,7 +185,6 @@ const SellerProducts = () => {
               <Form.Label>Product Description</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -195,7 +193,6 @@ const SellerProducts = () => {
               <Form.Label>Product Color</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={color}
                 onChange={(e) => setColor(e.target.value)}
               />
@@ -228,7 +225,6 @@ const SellerProducts = () => {
               <Form.Label>Product Price</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
@@ -237,7 +233,6 @@ const SellerProducts = () => {
               <Form.Label>Product Feature</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={features}
                 onChange={(e) => setFeatures(e.target.value)}
               />
@@ -246,7 +241,6 @@ const SellerProducts = () => {
               <Form.Label>Product Image</Form.Label>
               <Form.Control
                 type="file"
-                required
                 onChange={(e) => setImages(e.target.files[0])}
               />
             </Form.Group>
@@ -254,7 +248,6 @@ const SellerProducts = () => {
               <Form.Label>Product Stock</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
               />
@@ -263,7 +256,6 @@ const SellerProducts = () => {
               <Form.Label>Product Brand</Form.Label>
               <Form.Control
                 type="text"
-                required
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
               />
@@ -274,7 +266,6 @@ const SellerProducts = () => {
                 type="text"
                 value={simType}
                 onChange={(e) => setSimType(e.target.value)}
-                required
               />
             </Form.Group>
             <Button

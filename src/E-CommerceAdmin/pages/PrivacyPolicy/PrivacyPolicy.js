@@ -18,6 +18,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 const PrivacyPolicy = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const [modelShowEdit, setModelShowEdit] = useState(false);
+  const [id, setId] = useState("");
   // const data = [
   //   {
   //     Privacy:
@@ -113,7 +115,35 @@ const PrivacyPolicy = () => {
     }
   }
 
+  //post
   function MyVerticallyCenteredModal(props) {
+    const [privacy, setPrivacy] = useState("");
+
+    const postData = async (e) => {
+      e.preventDefault();
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/privacy`;
+      try {
+        const res = await axios.post(
+          url,
+          { privacy: privacy },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log("Data is create successfully", res.data);
+        toast("Data is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModalShow(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return (
       <Modal
         {...props}
@@ -128,7 +158,7 @@ const PrivacyPolicy = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
+          <Form onSubmit={postData}>
             <Form.Group className="mb-3">
               <FloatingLabel
                 controlId="floatingTextarea2"
@@ -137,6 +167,89 @@ const PrivacyPolicy = () => {
                 <Form.Control
                   as="textarea"
                   placeholder="Leave a comment here"
+                  value={privacy}
+                  onChange={(e) => setPrivacy(e.target.value)}
+                />
+              </FloatingLabel>
+            </Form.Group>
+            <Button
+              style={{ backgroundColor: "#19376d", borderRadius: "0" }}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
+  const handlePutRequest = (i) => {
+    setId(i);
+    setModelShowEdit(true);
+  };
+
+  //edit privacy
+  function MyVerticallyCenteredModalEdit(props) {
+    const [privacy, setPrivacy] = useState();
+    const [editId, setEditId] = useState("");
+
+    useEffect(() => {
+      if (props.show === true) {
+        setEditId(id._id);
+        setPrivacy(id.privacy);
+      }
+    }, [props]);
+
+    const handleEdit = async (e) => {
+      e.preventDefault();
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/privacy/${editId}`;
+      try {
+        const res = await axios.put(
+          url,
+          { privacy: privacy },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        console.log("Data is create successfully", res.data);
+        toast("Data is Edit successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        getProducts();
+        setModelShowEdit(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {" "}
+            Edit Privacy Policy
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={handleEdit}>
+            <Form.Group className="mb-3">
+              <FloatingLabel
+                controlId="floatingTextarea2"
+                label="Privacy Policy"
+              >
+                <Form.Control
+                  as="textarea"
+                  placeholder="Leave a comment here"
+                  value={privacy}
+                  onChange={(e) => setPrivacy(e.target.value)}
                 />
               </FloatingLabel>
             </Form.Group>
@@ -157,6 +270,10 @@ const PrivacyPolicy = () => {
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
+      />
+      <MyVerticallyCenteredModalEdit
+        show={modelShowEdit}
+        onHide={() => setModelShowEdit(false)}
       />
 
       <section>
@@ -221,7 +338,7 @@ const PrivacyPolicy = () => {
                                   <div
                                     className="two_Sec_Div"
                                     onClick={() => {
-                                      setModalShow(true);
+                                      handlePutRequest(i);
                                     }}
                                   >
                                     <i className="fa-solid fa-pen-to-square"></i>

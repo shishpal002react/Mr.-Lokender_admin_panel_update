@@ -11,10 +11,10 @@ const EAdminOrders = () => {
   const [modalShow, setModalShow] = useState(false);
 
   //api calling
-  // const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState([]);
   const getProducts = async () => {
     console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+    let url = `${BaseUrl()}api/v1/seller/orders/me`;
     try {
       const res = await axios.get(url, {
         headers: {
@@ -22,7 +22,7 @@ const EAdminOrders = () => {
         },
       });
       console.log("product from category section", res.data.categories);
-      // setOrder(res.data.categories);
+      setOrder(res.data.categories);
       console.log("category", res.data);
     } catch (error) {
       console.log(error);
@@ -33,28 +33,28 @@ const EAdminOrders = () => {
     getProducts();
   }, []);
 
-  const order = [
-    {
-      user: "Varun",
-      totalPrice: "500",
-      isPaid: true,
-      isDelivered: true,
-      paymentMethod: "COD",
-      taxPrice: "250",
-      shippingPrice: "250",
-      status: "Shipped",
-      products: [
-        {
-          product: "REDMI 10 Power",
-        },
-        {
-          product: "OPPO A17k",
-        },
-      ],
-      shippingAddress:
-        "S/o Arun chaudhary village shekhpuri bhola road meerut 250502",
-    },
-  ];
+  // const order = [
+  //   {
+  //     user: "Varun",
+  //     totalPrice: "500",
+  //     isPaid: true,
+  //     isDelivered: true,
+  //     paymentMethod: "COD",
+  //     taxPrice: "250",
+  //     shippingPrice: "250",
+  //     status: "Shipped",
+  //     products: [
+  //       {
+  //         product: "REDMI 10 Power",
+  //       },
+  //       {
+  //         product: "OPPO A17k",
+  //       },
+  //     ],
+  //     shippingAddress:
+  //       "S/o Arun chaudhary village shekhpuri bhola road meerut 250502",
+  //   },
+  // ];
 
   // Pagination and Filter
   const [query, setQuery] = useState("");

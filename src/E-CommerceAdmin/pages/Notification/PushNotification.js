@@ -331,18 +331,6 @@ const PushNotification = () => {
                         <Dropdown
                           overlay={
                             <Menu>
-                              <Menu.Item key="2">
-                                <div
-                                  className="two_Sec_Div"
-                                  onClick={() => {
-                                    handleEdit(i);
-                                  }}
-                                >
-                                  <i className="fa-solid fa-pen-to-square"></i>
-
-                                  <p>Edit </p>
-                                </div>
-                              </Menu.Item>
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>

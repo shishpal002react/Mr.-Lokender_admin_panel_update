@@ -4,32 +4,58 @@ import { Dropdown, Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import { Alert, Badge, Button, Form, Modal, Table } from "react-bootstrap";
 import HOC from "../../layout/HOC";
+import BaseUrl from "../../../BaseUrl";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EAdminOrders = () => {
   const [modalShow, setModalShow] = useState(false);
+  const [id, setId] = useState("");
 
-  const data = [
-    {
-      user: "Varun",
-      totalPrice: "500",
-      isPaid: true,
-      isDelivered: true,
-      paymentMethod: "COD",
-      taxPrice: "250",
-      shippingPrice: "250",
-      status: "Shipped",
-      products: [
-        {
-          product: "REDMI 10 Power",
+  // const data = [
+  //   {
+  //     user: "Varun",
+  //     totalPrice: "500",
+  //     isPaid: true,
+  //     isDelivered: true,
+  //     paymentMethod: "COD",
+  //     taxPrice: "250",
+  //     shippingPrice: "250",
+  //     status: "Shipped",
+  //     products: [
+  //       {
+  //         product: "REDMI 10 Power",
+  //       },
+  //       {
+  //         product: "OPPO A17k",
+  //       },
+  //     ],
+  //     shippingAddress:
+  //       "S/o Arun chaudhary village shekhpuri bhola road meerut 250502",
+  //   },
+  // ];
+  const [data, setData] = useState([]);
+  const getProducts = async () => {
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/admin/orders`;
+    try {
+      const res = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        {
-          product: "OPPO A17k",
-        },
-      ],
-      shippingAddress:
-        "S/o Arun chaudhary village shekhpuri bhola road meerut 250502",
-    },
-  ];
+      });
+      console.log("product from category section", res.data.orders);
+      setData(res.data.orders);
+      console.log("category", res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   // Pagination and Filter
   const [query, setQuery] = useState("");
@@ -66,7 +92,34 @@ const EAdminOrders = () => {
     }
   }
 
+  const handleEdit = (id) => {
+    setModalShow(true);
+    setId(id);
+  };
+
   function EditStatus(props) {
+    const [data, setData] = useState("");
+
+    const putRequest = async (e) => {
+      e.preventDefault();
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/admin/order/${id}`;
+      try {
+        const res = await axios.put(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("put category data", res.data);
+        toast("Data is Edit successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setModalShow(false);
+        getProducts();
+      } catch (error) {
+        console.log(error);
+      }
+    };
     return (
       <Modal
         {...props}
@@ -80,12 +133,16 @@ const EAdminOrders = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            <Form.Select aria-label="Default select example" className="mb-3">
-              <option>--Edit Status--</option>
-              <option value="1">Shipped</option>
-              <option value="2">Pending</option>
-              <option value="3">Canceled</option>
+          <Form onSubmit={putRequest}>
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setData(e.target.value)}
+            >
+              <option disabled>--Edit Status--</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Pending">Pending</option>
+              <option value="Canceled">Canceled</option>
             </Form.Select>
             <Button variant="outline-success">Submit</Button>
           </Form>
@@ -140,8 +197,8 @@ const EAdminOrders = () => {
                       <th>Tax Price</th>
                       <th>Shipping Price</th>
                       <th>Status</th>
-                      <th>Product</th>
-                      <th>Shipping Address</th>
+                      {/* <th>Product</th> */}
+                      {/* <th>Shipping Address</th> */}
                       <th></th>
                     </tr>
                   </thead>
@@ -185,15 +242,15 @@ const EAdminOrders = () => {
                         <td>
                           <Badge bg="success"> {i.status} </Badge>
                         </td>
-                        <td>
+                        {/* <td>
                           {" "}
                           {i.products?.map((item, index) => (
                             <ul key={index} style={{ listStyle: "disc" }}>
                               <li> {item.product} </li>
                             </ul>
                           ))}{" "}
-                        </td>
-                        <td>{i.shippingAddress}</td>
+                        </td> */}
+                        {/* <td>{i.shippingAddress}</td> */}
                         <td>
                           <Dropdown
                             overlay={
@@ -202,7 +259,8 @@ const EAdminOrders = () => {
                                   <div
                                     className="two_Sec_Div"
                                     onClick={() => {
-                                      setModalShow(true);
+                                      // setModalShow(true);
+                                      handleEdit(i._id);
                                     }}
                                   >
                                     <i className="fa-solid fa-pen-to-square"></i>
@@ -274,10 +332,9 @@ const EAdminOrders = () => {
           )}
         </section>
       </section>
+      <ToastContainer />
     </>
   );
 };
 
 export default HOC(EAdminOrders);
-
-
