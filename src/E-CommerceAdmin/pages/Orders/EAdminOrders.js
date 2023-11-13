@@ -105,11 +105,15 @@ const EAdminOrders = () => {
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/admin/order/${id}`;
       try {
-        const res = await axios.put(url, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await axios.put(
+          url,
+          { status: data },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         console.log("put category data", res.data);
         toast("Data is Edit successfully", {
           position: toast.POSITION.TOP_CENTER,
@@ -140,9 +144,9 @@ const EAdminOrders = () => {
               onChange={(e) => setData(e.target.value)}
             >
               <option disabled>--Edit Status--</option>
-              <option value="Delivered">Delivered</option>
-              <option value="Pending">Pending</option>
-              <option value="Canceled">Canceled</option>
+              <option value="delivered">Delivered</option>
+              <option value="shipped">Shipped</option>
+              <option value="canceled">Canceled</option>
             </Form.Select>
             <Button variant="outline-success">Submit</Button>
           </Form>

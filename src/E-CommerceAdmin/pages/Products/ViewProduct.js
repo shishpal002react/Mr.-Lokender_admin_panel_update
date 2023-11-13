@@ -1,29 +1,82 @@
-/** @format */
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
+import { Table } from "react-bootstrap";
+import SpinnerComp from "../Component/SpinnerComp";
+import { Dropdown, Menu } from "antd";
 import { Link, useParams } from "react-router-dom";
-import { Badge } from "react-bootstrap";
-import { useState } from "react";
-import { useEffect } from "react";
-import BaseUrl from "../../../BaseUrl";
+import BaseUrl from "./../../../BaseUrl";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const ViewProduct = () => {
   const { id } = useParams();
+  const [query, setQuery] = useState("");
 
-  //api calling
-  const [product, setProduct] = useState("");
+  // const data = [
+  //   {
+  //     img: "https://rukminim1.flixcart.com/image/416/416/kq18n0w0/mobile/y/2/b/narzo-30-rmx2156-realme-original-imag45yhzhugdcqh.jpeg?q=70",
+  //     name: "realme Narzo 30 (Racing Silver, 128 GB)  (6 GB RAM)",
+  //     review: "4.3",
+  //     rating: "77,509 Ratings & 6,081 Reviews",
+  //     discount: "26% off",
+  //     price: "12,499",
+  //     discountedPrice: "16,999",
+  //     features: [
+  //       "6 GB RAM | 128 GB ROM | Expandable Upto 256 GB",
+  //       "16.51 cm (6.5 inch) Full HD+ Display",
+  //       "48MP + 2MP + 2MP | 16MP Front Camera ",
+  //       "5000 mAh Battery ",
+  //       "MediaTek Helio G95 Processor",
+  //       "30W Charger",
+  //     ],
+  //     description:
+  //       "With the realme Narzo 30, make your mobile gaming experience smooth, lag-free, and immersive. This smartphone runs on the Helio G95 Gaming Processor for intense gaming, a 90 Hz Ultra-smooth Display for smooth scrolling, and a 5000 mAh Massive Battery for hours of gaming marathons.",
+  //     sellerName: "Seller Name",
+  //     storeName: "Store Name",
+  //     color: ["Red", "Black", "Green"],
+  //     size: [""],
+  //     stock: 10,
+  //   },
+  //   {
+  //     img: "https://rukminim1.flixcart.com/image/832/832/xif0q/t-shirt/x/v/e/l-all-rbcropn-sky-one-nb-nicky-boy-original-imagkq6hgg5gqsep.jpeg?q=70",
+  //     name: "Men Printed Round Neck Cotton Blend Light Blue T-Shirt",
+  //     review: "3.7",
+  //     rating: "10,297 ratings and 467 reviews",
+  //     discount: "61% off",
+  //     price: "10,000",
+  //     discountedPrice: "20,000",
+  //     features: [
+  //       "Round Neck",
+  //       "  Full Sleeve",
+  //       "Regular",
+  //       "Cotton Blend",
+  //       "All RBCPON SKY-One ",
+  //     ],
+  //     description:
+  //       "Look confident with this Casual Men T-Shirt It is regular machine wash. This fabric is soft in touch and it makes feel so comfort when you wear. The fabric does not pill and the colour will not fade easily.Available in various color and designs for your every day fashion",
+  //     sellerName: "Seller Name",
+  //     storeName: "Store Name",
+  //     color: ["Red", "Black", "Green"],
+  //     size: ["S", "M", "L", "XL"],
+  //     stock: 10,
+  //   },
+  // ];
+
+  //api
+  const [seller, setSeller] = useState([]);
   const getProducts = async () => {
-    console.log("ls", localStorage.getItem("boon"));
-    let url = `${BaseUrl()}api/v1/product/single/${id}`;
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/product/seller/${id}`;
     try {
       const res = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("boon")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setProduct(res.data.product);
-      console.log(res.data.product);
+      console.log("product from shoes section", res.data.products);
+      setSeller(res.data);
+      console.log("admin product data", res.data.products, id);
     } catch (error) {
       console.log(error);
     }
@@ -33,83 +86,217 @@ const ViewProduct = () => {
     getProducts();
   }, []);
 
+  //delete api api/v1/product/
+  const handleDelete = async (id) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/product/${id}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Data is Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Pagination
+  const [currentPage2, setCurrentPage2] = useState(1);
+  const [postPerPage2] = useState(10);
+  const lastPostIndex2 = currentPage2 * postPerPage2;
+  const firstPostIndex2 = lastPostIndex2 - postPerPage2;
+
+  let pages2 = [];
+
+  const TotolData = query
+    ? seller?.filter(
+        (i) =>
+          i?.name?.toLowerCase().includes(query?.toLowerCase()) ||
+          i?.sellerName
+            ?.toString()
+            ?.toLowerCase()
+            .includes(query?.toLowerCase())
+      )
+    : seller;
+
+  useEffect(() => {
+    if (query) {
+      setCurrentPage2(1);
+    }
+  }, [query]);
+
+  const slicedData = TotolData?.slice(firstPostIndex2, lastPostIndex2);
+
+  for (let i = 1; i <= Math.ceil(TotolData?.length / postPerPage2); i++) {
+    pages2.push(i);
+  }
+
+  function Next() {
+    setCurrentPage2(currentPage2 + 1);
+  }
+
+  function Prev() {
+    if (currentPage2 !== 1) {
+      setCurrentPage2(currentPage2 - 1);
+    }
+  }
+
   return (
     <>
       <p className="headP">
-        {" "}
-        <Link to="/dashboard">Dashboard</Link> /{" "}
-        <Link to="/Product">Products</Link> / {product.name}{" "}
+        <Link to="/dashboard">Dashboard</Link> / Product{" "}
       </p>
 
+      <div
+        className="pb-4  w-full flex justify-between items-center"
+        style={{ width: "98%", marginLeft: "2%" }}
+      >
+        <span
+          className="tracking-widest text-slate-900 font-semibold uppercase"
+          style={{ fontSize: "1.5rem" }}
+        >
+          All Seller Product's ( Total : {seller?.length} )
+        </span>
+      </div>
+
       <section className="sectionCont">
-        <div className="Detail_Section">
-          <div className="Left_Cont">
-            <img src={product?.images?.[0]} alt="" />
-          </div>
-          <div className="right_Cont">
-            <p className="Head">{product.name}</p>
-            <p className="Rating">
-              <Badge bg="success"> 4.3</Badge>{" "}
-              <span className="rat">{product.ratings}</span>{" "}
-            </p>
-            <p>
-              {" "}
-              <Badge bg="success">{product.discountPercent}% off</Badge>{" "}
-            </p>
-            <p>
-              {" "}
-              <Badge>{product.stock}</Badge>{" "}
-            </p>
-
-            <div className="two_Sec">
-              <p className="first">
-                {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i>12,499{" "}
-              </p>
-              <p className="second">
-                {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i> 16,488{" "}
-              </p>
+        {seller?.length === 0 || !seller ? (
+          <SpinnerComp />
+        ) : (
+          <>
+            <div className="filterBox">
+              <img
+                src="https://t4.ftcdn.net/jpg/01/41/97/61/360_F_141976137_kQrdYIvfn3e0RT1EWbZOmQciOKLMgCwG.jpg"
+                alt=""
+              />
+              <input
+                type="search"
+                placeholder="Start typing to search for products"
+                onChange={(e) => setQuery(e.target.value)}
+              />
             </div>
 
-            <ul>
-              {product?.features?.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
+            <div className="overFlowCont">
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Sno.</th>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Reviews</th>
+                    <th>Discount</th>
+                    <th>Total Stock</th>
+                    <th>Price</th>
+                    <th>Discounted Price</th>
+                    <th> </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {slicedData?.map((i, index) => (
+                    <tr key={index}>
+                      <td> {index + 1} </td>
+                      <td>
+                        <img
+                          src={i?.images?.[0]}
+                          alt=""
+                          style={{ width: "60px" }}
+                        />
+                      </td>
+                      <td>{i.name}</td>
+                      <td>{i?.reviews?.length}</td>
+                      <td>{i.discountAmount}</td>
+                      <td>{i.stock}</td>
+                      <td>{i.price}</td>
+                      <td>{i.discountedPrice}</td>
+                      <td style={{ textAlign: "center" }}>
+                        <Dropdown
+                          overlay={
+                            <Menu>
+                              <Menu.Item key="2">
+                                <div className="two_Sec_Div">
+                                  <i className="fa-solid fa-eye"></i>
+                                  <Link to={`/seller/single/product/${i._id}`}>
+                                    <p>View Product</p>
+                                  </Link>
+                                </div>
+                              </Menu.Item>
+                              <Menu.Item key="3">
+                                <div className="two_Sec_Div">
+                                  <i className="fa-sharp fa-solid fa-trash"></i>
+                                  <p onClick={() => handleDelete(i._id)}>
+                                    Delete Product
+                                  </p>
+                                </div>
+                              </Menu.Item>
+                            </Menu>
+                          }
+                          trigger={["click"]}
+                        >
+                          <i className="fa-solid fa-ellipsis-vertical"></i>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
 
-            <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-              <p>
-                {" "}
-                <strong>Description</strong>{" "}
-              </p>{" "}
-              : <p>{product.description}</p>
+              <div className="pagination">
+                <button onClick={() => Prev()} className="prevBtn">
+                  <i className="fa-solid fa-backward"></i>
+                </button>
+                {currentPage2 === 1 ? (
+                  ""
+                ) : (
+                  <button onClick={() => setCurrentPage2(1)}>1</button>
+                )}
+
+                {pages2
+                  ?.slice(currentPage2 - 1, currentPage2 + 3)
+                  .map((i, index) =>
+                    i === pages2?.length ? (
+                      ""
+                    ) : (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPage2(i)}
+                        className={currentPage2 === i ? "activePage" : ""}
+                      >
+                        {" "}
+                        {i}{" "}
+                      </button>
+                    )
+                  )}
+
+                <button
+                  onClick={() => setCurrentPage2(pages2?.length)}
+                  className={
+                    currentPage2 === pages2?.length ? "activePage" : ""
+                  }
+                >
+                  {" "}
+                  {pages2?.length}{" "}
+                </button>
+
+                {currentPage2 === pages2?.length ? (
+                  ""
+                ) : (
+                  <button onClick={() => Next()} className="nextBtn">
+                    {" "}
+                    <i className="fa-sharp fa-solid fa-forward"></i>
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-              <p>
-                {" "}
-                <strong>Color</strong> :
-              </p>{" "}
-              {product?.color?.map((item, i) => (
-                <span>{item.color} </span>
-              ))}
-            </div>
-            {/* <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-            <p>
-              {" "}
-              <strong>Seller Name</strong> :
-            </p>{" "}
-            <p>Seller Name</p>
-          </div> */}
-            <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-              <p>
-                <strong>Brand Name</strong> :
-              </p>{" "}
-              <p>{product.brand}</p>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </section>
+      <ToastContainer />
     </>
   );
 };

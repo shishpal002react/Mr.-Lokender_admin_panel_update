@@ -47,29 +47,32 @@ const ViewProduct = () => {
           </div>
           <div className="right_Cont">
             <p className="Head">
-              {product.name} (Racing Silver, 128 GB) (6 GB RAM)
+              {product.name}
+              {/* (Racing Silver, 128 GB) (6 GB RAM) */}
             </p>
             <p className="Rating">
-              <Badge bg="success"> {product.rating} </Badge>{" "}
-              <span className="rat">77,509 Ratings & 6,081 Reviews</span>{" "}
+              <Badge bg="success"> {product.ratings}</Badge>{" "}
+              <span className="rat">{product.ratings}</span>{" "}
             </p>
             <p>
               {" "}
-              <Badge bg="success">26% off</Badge>{" "}
+              <Badge bg="success">{product.discountPercent}off</Badge>{" "}
             </p>
             <p>
               {" "}
-              <Badge>10 in Stock</Badge>{" "}
+              <Badge>{product.stock}</Badge>{" "}
             </p>
 
             <div className="two_Sec">
               <p className="first">
                 {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i>12,499{" "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>
+                {product.price}{" "}
               </p>
               <p className="second">
                 {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i> 16,488{" "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
+                {product.price + product.discountAmount}{" "}
               </p>
             </div>
 

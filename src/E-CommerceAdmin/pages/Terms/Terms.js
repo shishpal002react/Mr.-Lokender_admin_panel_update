@@ -46,7 +46,7 @@ const Terms = () => {
         },
       });
       console.log("product from shoes section", res.data.terms);
-      setData(res.data.terms);
+      setData(res.data.terms.reverse());
       console.log("admin product data", res.data.terms);
     } catch (error) {
       console.log(error);

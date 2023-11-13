@@ -30,7 +30,7 @@ const ESubCategory = () => {
         },
       });
       console.log("product from category section", res.data.categories);
-      setSubCategory(res.data.categories);
+      setSubCategory(res.data.categories.reverse());
       console.log("category", res.data);
     } catch (error) {
       console.log(error);
@@ -43,7 +43,7 @@ const ESubCategory = () => {
 
   //delete subCategory
   const handleDelete = async (id) => {
-    console.log(id);
+    console.log("category id is not working", id);
     console.log("ls", localStorage.getItem("token"));
     let url = `${BaseUrl()}api/v1/admin/delete/sub/Category/${id}`;
     try {
@@ -107,24 +107,28 @@ const ESubCategory = () => {
     const postData = async (e) => {
       e.preventDefault();
 
-      const formdata = new FormData();
-      formdata.append("name", name);
-      formdata.append("categoryId", subCategoryId);
+      // const formdata = new FormData();
+      // formdata.append("name", name);
+      // formdata.append("categoryId", subCategoryId);
 
       console.log("ls", localStorage.getItem("token"));
-      let url = `${BaseUrl()}api/v1/admin/createCategory/${name}`;
+      let url = `${BaseUrl()}api/v1/admin/createSubCategory`;
       try {
-        const res = await axios.post(url, formdata, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await axios.post(
+          url,
+          { name: name, categoryId: subCategoryId },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
         console.log("Data is create successfully", res.data);
         toast("Data is create successfully", {
           position: toast.POSITION.TOP_CENTER,
         });
-        getProducts();
         setModalShow(false);
+        getProducts();
       } catch (error) {
         console.log(error);
       }

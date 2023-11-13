@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
-import { Table } from "react-bootstrap";
+import { Alert, Table } from "react-bootstrap";
 import SpinnerComp from "../Component/SpinnerComp";
 import { Dropdown, Menu } from "antd";
 import { Link, useParams } from "react-router-dom";
@@ -67,7 +67,7 @@ const SellerProducts = () => {
   const [seller, setSeller] = useState([]);
   const getProducts = async () => {
     console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/products`;
+    let url = `${BaseUrl()}api/v1/product/seller/${id}`;
     try {
       const res = await axios.get(url, {
         headers: {
@@ -75,8 +75,8 @@ const SellerProducts = () => {
         },
       });
       console.log("product from shoes section", res.data.products);
-      setSeller(res.data.products);
-      console.log("admin product data", res.data.products);
+      setSeller(res.data);
+      console.log("admin product data", res.data.products, id);
     } catch (error) {
       console.log(error);
     }
@@ -167,7 +167,8 @@ const SellerProducts = () => {
 
       <section className="sectionCont">
         {seller?.length === 0 || !seller ? (
-          <SpinnerComp />
+          // <SpinnerComp />
+          <Alert>No Data Found</Alert>
         ) : (
           <>
             <div className="filterBox">
@@ -202,11 +203,15 @@ const SellerProducts = () => {
                     <tr key={index}>
                       <td> {index + 1} </td>
                       <td>
-                        <img src={i.image} alt="" style={{ width: "60px" }} />
+                        <img
+                          src={i?.images?.[0]}
+                          alt=""
+                          style={{ width: "60px" }}
+                        />
                       </td>
                       <td>{i.name}</td>
-                      <td>{i.review}</td>
-                      <td>{i.discount}</td>
+                      <td>{i?.reviews?.length}</td>
+                      <td>{i.discountAmount}</td>
                       <td>{i.stock}</td>
                       <td>{i.price}</td>
                       <td>{i.discountedPrice}</td>

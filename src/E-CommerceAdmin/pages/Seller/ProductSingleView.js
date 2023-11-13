@@ -49,7 +49,7 @@ const ProductSingleView = () => {
           <div className="right_Cont">
             <p className="Head">{product.name}</p>
             <p className="Rating">
-              <Badge bg="success"> 4.3</Badge>{" "}
+              <Badge bg="success"> {product.ratings}</Badge>{" "}
               <span className="rat">{product.ratings}</span>{" "}
             </p>
             <p>
@@ -64,11 +64,13 @@ const ProductSingleView = () => {
             <div className="two_Sec">
               <p className="first">
                 {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i>12,499{" "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>
+                {product.price}{" "}
               </p>
               <p className="second">
                 {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i> 16,488{" "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>
+                {product.price + product.discountAmount}{" "}
               </p>
             </div>
 

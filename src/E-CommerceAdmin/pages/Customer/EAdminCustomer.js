@@ -109,9 +109,10 @@ const EAdminCustomer = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      toast("Product delete successfully", {
+      toast("Customer delete successfully", {
         position: toast.POSITION.TOP_CENTER,
       });
+      getProducts();
     } catch (error) {
       console.log(error);
     }

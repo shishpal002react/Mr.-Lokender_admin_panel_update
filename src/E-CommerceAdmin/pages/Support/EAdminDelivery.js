@@ -31,7 +31,7 @@ const EAdminDelivery = () => {
         },
       });
 
-      setData(res.data.supports);
+      setData(res.data.supports.reverse());
       console.log("admin support data", res.data.supports);
     } catch (error) {
       console.log(error);

@@ -31,7 +31,7 @@ const ECategory = () => {
         },
       });
       console.log("product from category section", res.data.categories);
-      setCategory(res.data.categories);
+      setCategory(res.data.categories.reverse());
       console.log("category", res.data);
     } catch (error) {
       console.log(error);

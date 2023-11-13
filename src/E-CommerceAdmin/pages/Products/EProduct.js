@@ -16,6 +16,7 @@ const EProduct = () => {
 
   //model
   const [modalShow, setModalShow] = React.useState(false);
+  // const [reverseArray, setReverseArray] = useState([]);
 
   //api calling
 
@@ -32,7 +33,8 @@ const EProduct = () => {
         },
       });
       console.log("product from shoes section", res.data);
-      setProduct(res.data.products);
+      setProduct(res.data.products?.reverse());
+
       console.log("admin product data", res.data);
     } catch (error) {
       console.log(error);
@@ -403,7 +405,7 @@ const EProduct = () => {
                               <Menu.Item key="2">
                                 <div className="two_Sec_Div">
                                   <i className="fa-solid fa-eye"></i>
-                                  <Link to={`/SellerProducts/product/${i._id}`}>
+                                  <Link to={`/seller/single/product/${i._id}`}>
                                     <p>View Product</p>
                                   </Link>
                                 </div>

@@ -46,7 +46,7 @@ const PrivacyPolicy = () => {
         },
       });
       console.log("product from shoes section", res.data.privacy);
-      setData(res.data.privacy);
+      setData(res.data.privacy.reverse());
       console.log("admin product data", res.data.privacy);
     } catch (error) {
       console.log(error);

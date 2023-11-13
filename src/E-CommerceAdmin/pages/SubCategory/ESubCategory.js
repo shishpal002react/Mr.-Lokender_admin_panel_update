@@ -30,7 +30,7 @@ const ESubCategory = () => {
         },
       });
       console.log("product from category section", res.data.categories);
-      setSubCategory(res.data.categories);
+      setSubCategory(res.data.categories.reverse());
       console.log("category", res.data);
     } catch (error) {
       console.log(error);
@@ -234,7 +234,7 @@ const ESubCategory = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        toast("Data is create successfully", {
+        toast("Data is Edit successfully", {
           position: toast.POSITION.TOP_CENTER,
         });
         getProducts();

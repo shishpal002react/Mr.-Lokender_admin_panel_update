@@ -32,7 +32,7 @@ const SellerProducts = () => {
         },
       });
       console.log("product from shoes section", res.data);
-      setProduct(res.data);
+      setProduct(res.data.reverse());
       console.log("admin product data", res.data);
     } catch (error) {
       console.log(error);
