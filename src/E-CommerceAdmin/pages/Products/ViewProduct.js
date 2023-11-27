@@ -1,82 +1,268 @@
+/** @format */
+
 import React, { useEffect, useState } from "react";
 import HOC from "../../layout/HOC";
-import { Table } from "react-bootstrap";
-import SpinnerComp from "../Component/SpinnerComp";
-import { Dropdown, Menu } from "antd";
 import { Link, useParams } from "react-router-dom";
-import BaseUrl from "./../../../BaseUrl";
+import { Badge } from "react-bootstrap";
+import BaseUrl from "../../../BaseUrl";
 import axios from "axios";
+import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ViewProduct = () => {
   const { id } = useParams();
-  const [query, setQuery] = useState("");
+  // console.log("id is work", name);
+  const [modalShow, setModalShow] = React.useState(false);
 
-  // const data = [
-  //   {
-  //     img: "https://rukminim1.flixcart.com/image/416/416/kq18n0w0/mobile/y/2/b/narzo-30-rmx2156-realme-original-imag45yhzhugdcqh.jpeg?q=70",
-  //     name: "realme Narzo 30 (Racing Silver, 128 GB)  (6 GB RAM)",
-  //     review: "4.3",
-  //     rating: "77,509 Ratings & 6,081 Reviews",
-  //     discount: "26% off",
-  //     price: "12,499",
-  //     discountedPrice: "16,999",
-  //     features: [
-  //       "6 GB RAM | 128 GB ROM | Expandable Upto 256 GB",
-  //       "16.51 cm (6.5 inch) Full HD+ Display",
-  //       "48MP + 2MP + 2MP | 16MP Front Camera ",
-  //       "5000 mAh Battery ",
-  //       "MediaTek Helio G95 Processor",
-  //       "30W Charger",
-  //     ],
-  //     description:
-  //       "With the realme Narzo 30, make your mobile gaming experience smooth, lag-free, and immersive. This smartphone runs on the Helio G95 Gaming Processor for intense gaming, a 90 Hz Ultra-smooth Display for smooth scrolling, and a 5000 mAh Massive Battery for hours of gaming marathons.",
-  //     sellerName: "Seller Name",
-  //     storeName: "Store Name",
-  //     color: ["Red", "Black", "Green"],
-  //     size: [""],
-  //     stock: 10,
-  //   },
-  //   {
-  //     img: "https://rukminim1.flixcart.com/image/832/832/xif0q/t-shirt/x/v/e/l-all-rbcropn-sky-one-nb-nicky-boy-original-imagkq6hgg5gqsep.jpeg?q=70",
-  //     name: "Men Printed Round Neck Cotton Blend Light Blue T-Shirt",
-  //     review: "3.7",
-  //     rating: "10,297 ratings and 467 reviews",
-  //     discount: "61% off",
-  //     price: "10,000",
-  //     discountedPrice: "20,000",
-  //     features: [
-  //       "Round Neck",
-  //       "  Full Sleeve",
-  //       "Regular",
-  //       "Cotton Blend",
-  //       "All RBCPON SKY-One ",
-  //     ],
-  //     description:
-  //       "Look confident with this Casual Men T-Shirt It is regular machine wash. This fabric is soft in touch and it makes feel so comfort when you wear. The fabric does not pill and the colour will not fade easily.Available in various color and designs for your every day fashion",
-  //     sellerName: "Seller Name",
-  //     storeName: "Store Name",
-  //     color: ["Red", "Black", "Green"],
-  //     size: ["S", "M", "L", "XL"],
-  //     stock: 10,
-  //   },
-  // ];
+  // post request
+  function MyVerticallyCenteredModalEdit(props) {
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [color, setColor] = useState("");
+    const [images, setImages] = useState();
+    const [price, setPrice] = useState();
+    const [features, setFeatures] = useState();
+    const [categoryId, setCategoryId] = useState("");
+    const [subCategoryId, setSubCategoryId] = useState("");
+    const [stock, setStock] = useState();
+    const [brand, setBrand] = useState();
+    const [simType, setSimType] = useState();
+    const [data1, setData1] = useState([]);
+    const [data2, setData2] = useState([]);
 
-  //api
-  const [seller, setSeller] = useState([]);
+    useEffect(() => {
+      if (props.show === true) {
+        setName(product.name);
+        setDescription(product.description);
+        setColor(product.color);
+        setImages(product.images);
+        setPrice(product.price);
+        setFeatures(product.features);
+        setStock(product.stock);
+        setBrand(product.brand);
+        setSimType(product.simType);
+      }
+    }, [props]);
+
+    const postData = async (e) => {
+      e.preventDefault();
+
+      const formdata = new FormData();
+      formdata.append("image", images);
+      formdata.append("name", name);
+      formdata.append("description", description);
+      formdata.append("features", features);
+      formdata.append("color", color);
+      formdata.append("price", price);
+      formdata.append("category", categoryId);
+      formdata.append("subCategory", subCategoryId);
+      formdata.append("stock", stock);
+      formdata.append("brand", brand);
+      formdata.append("simType", simType);
+
+      console.log("ls", localStorage.getItem("token"));
+      let url = `${BaseUrl()}api/v1/product/new/admin`;
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log("Product is create successfully", res.data);
+        toast("Product is create successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setModalShow(false);
+        getProducts();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    //category data
+    const categoryData = async () => {
+      let url = `${BaseUrl()}api/v1/admin/allCategory`;
+      try {
+        const res = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        //please check again
+        setData1(res.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      if (props.show === true) {
+        categoryData();
+        setName(product.name);
+      }
+    }, [props]);
+
+    //category data
+    const subCategoryData = async () => {
+      let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+      try {
+        const res = await axios.get(url, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        //please check again
+        setData2(res.data.categories);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    useEffect(() => {
+      if (props.show === true) {
+        subCategoryData();
+      }
+    }, [props]);
+
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {" "}
+            {"Add Product Category"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={postData}>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Name</Form.Label>
+              <Form.Control
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Description</Form.Label>
+              <Form.Control
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Color</Form.Label>
+              <Form.Control
+                type="text"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+              />
+            </Form.Group>
+            {/* category id */}
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setCategoryId(e.target.value)}
+            >
+              <option>Select Category</option>
+              {data1 &&
+                data1?.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
+            </Form.Select>
+            {/* subcategory */}
+            <Form.Select
+              aria-label="Default select example"
+              className="mb-3"
+              onChange={(e) => setSubCategoryId(e.target.value)}
+            >
+              <option>Select subCategory</option>
+              {data2 &&
+                data2?.map((item) => (
+                  <option value={item._id}>{item.name}</option>
+                ))}
+            </Form.Select>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Price</Form.Label>
+              <Form.Control
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Feature</Form.Label>
+              <Form.Control
+                type="text"
+                value={features}
+                onChange={(e) => setFeatures(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Image</Form.Label>
+              <Form.Control
+                type="file"
+                onChange={(e) => setImages(e.target.files[0])}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Stock</Form.Label>
+              <Form.Control
+                type="text"
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Brand</Form.Label>
+              <Form.Control
+                type="text"
+                value={brand}
+                onChange={(e) => setBrand(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product sim Type</Form.Label>
+              <Form.Control
+                type="text"
+                value={simType}
+                onChange={(e) => setSimType(e.target.value)}
+              />
+            </Form.Group>
+            <Button
+              style={{
+                backgroundColor: "#19376d",
+                borderRadius: "0",
+                border: "1px solid #19376d",
+              }}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+  //api calling
+  const [product, setProduct] = useState("");
   const getProducts = async () => {
-    console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/product/seller/${id}`;
+    console.log("ls golu", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/product/single/${id}`;
     try {
       const res = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log("product from shoes section", res.data.products);
-      setSeller(res.data);
-      console.log("admin product data", res.data.products, id);
+      setProduct(res.data.product);
+      console.log(res.data.product);
     } catch (error) {
       console.log(error);
     }
@@ -86,216 +272,96 @@ const ViewProduct = () => {
     getProducts();
   }, []);
 
-  //delete api api/v1/product/
-  const handleDelete = async (id) => {
-    console.log(id);
-    console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/product/${id}`;
-    try {
-      const res = await axios.delete(url, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      toast("Data is Delete successfully", {
-        position: toast.POSITION.TOP_CENTER,
-      });
-      getProducts();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Pagination
-  const [currentPage2, setCurrentPage2] = useState(1);
-  const [postPerPage2] = useState(10);
-  const lastPostIndex2 = currentPage2 * postPerPage2;
-  const firstPostIndex2 = lastPostIndex2 - postPerPage2;
-
-  let pages2 = [];
-
-  const TotolData = query
-    ? seller?.filter(
-        (i) =>
-          i?.name?.toLowerCase().includes(query?.toLowerCase()) ||
-          i?.sellerName
-            ?.toString()
-            ?.toLowerCase()
-            .includes(query?.toLowerCase())
-      )
-    : seller;
-
-  useEffect(() => {
-    if (query) {
-      setCurrentPage2(1);
-    }
-  }, [query]);
-
-  const slicedData = TotolData?.slice(firstPostIndex2, lastPostIndex2);
-
-  for (let i = 1; i <= Math.ceil(TotolData?.length / postPerPage2); i++) {
-    pages2.push(i);
-  }
-
-  function Next() {
-    setCurrentPage2(currentPage2 + 1);
-  }
-
-  function Prev() {
-    if (currentPage2 !== 1) {
-      setCurrentPage2(currentPage2 - 1);
-    }
-  }
-
   return (
     <>
-      <p className="headP">
-        <Link to="/dashboard">Dashboard</Link> / Product{" "}
-      </p>
-
       <div
         className="pb-4  w-full flex justify-between items-center"
         style={{ width: "98%", marginLeft: "2%" }}
       >
-        <span
-          className="tracking-widest text-slate-900 font-semibold uppercase"
-          style={{ fontSize: "1.5rem" }}
+        <p className="headP">
+          {" "}
+          <Link to="/dashboard">Dashboard</Link> /{" "}
+          <Link to="/Product">Products</Link> / {product.name}{" "}
+        </p>
+        <button
+          onClick={() => {
+            // setEdit(false);
+            setModalShow(true);
+          }}
+          className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
         >
-          All Seller Product's ( Total : {seller?.length} )
-        </span>
+          Edit Product
+        </button>
       </div>
 
       <section className="sectionCont">
-        {seller?.length === 0 || !seller ? (
-          <SpinnerComp />
-        ) : (
-          <>
-            <div className="filterBox">
-              <img
-                src="https://t4.ftcdn.net/jpg/01/41/97/61/360_F_141976137_kQrdYIvfn3e0RT1EWbZOmQciOKLMgCwG.jpg"
-                alt=""
-              />
-              <input
-                type="search"
-                placeholder="Start typing to search for products"
-                onChange={(e) => setQuery(e.target.value)}
-              />
+        <div className="Detail_Section">
+          <div className="Left_Cont">
+            <img src={product?.images?.[0]} alt="" />
+          </div>
+          <div className="right_Cont">
+            <p className="Head">
+              {product.name}
+              {/* (Racing Silver, 128 GB) (6 GB RAM) */}
+            </p>
+            <p className="Rating">
+              <Badge bg="success"> {product.ratings}</Badge>{" "}
+              <span className="rat">{product.ratings}</span>{" "}
+            </p>
+            <p>
+              {" "}
+              <Badge bg="success">{product.discountPercent}off</Badge>{" "}
+            </p>
+            <p>
+              {" "}
+              <Badge>{product.stock}</Badge>{" "}
+            </p>
+
+            <div className="two_Sec">
+              <p className="first">
+                {" "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>
+                {product.price}{" "}
+              </p>
+              <p className="second">
+                {" "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
+                {product.price + product.discountAmount}{" "}
+              </p>
             </div>
 
-            <div className="overFlowCont">
-              <Table>
-                <thead>
-                  <tr>
-                    <th>Sno.</th>
-                    <th>Image</th>
-                    <th>Title</th>
-                    <th>Reviews</th>
-                    <th>Discount</th>
-                    <th>Total Stock</th>
-                    <th>Price</th>
-                    <th>Discounted Price</th>
-                    <th> </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {slicedData?.map((i, index) => (
-                    <tr key={index}>
-                      <td> {index + 1} </td>
-                      <td>
-                        <img
-                          src={i?.images?.[0]}
-                          alt=""
-                          style={{ width: "60px" }}
-                        />
-                      </td>
-                      <td>{i.name}</td>
-                      <td>{i?.reviews?.length}</td>
-                      <td>{i.discountAmount}</td>
-                      <td>{i.stock}</td>
-                      <td>{i.price}</td>
-                      <td>{i.discountedPrice}</td>
-                      <td style={{ textAlign: "center" }}>
-                        <Dropdown
-                          overlay={
-                            <Menu>
-                              <Menu.Item key="2">
-                                <div className="two_Sec_Div">
-                                  <i className="fa-solid fa-eye"></i>
-                                  <Link to={`/seller/single/product/${i._id}`}>
-                                    <p>View Product</p>
-                                  </Link>
-                                </div>
-                              </Menu.Item>
-                              <Menu.Item key="3">
-                                <div className="two_Sec_Div">
-                                  <i className="fa-sharp fa-solid fa-trash"></i>
-                                  <p onClick={() => handleDelete(i._id)}>
-                                    Delete Product
-                                  </p>
-                                </div>
-                              </Menu.Item>
-                            </Menu>
-                          }
-                          trigger={["click"]}
-                        >
-                          <i className="fa-solid fa-ellipsis-vertical"></i>
-                        </Dropdown>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+            <ul>
+              {product?.features?.map((i) => (
+                <li>{i}</li>
+              ))}
+            </ul>
 
-              <div className="pagination">
-                <button onClick={() => Prev()} className="prevBtn">
-                  <i className="fa-solid fa-backward"></i>
-                </button>
-                {currentPage2 === 1 ? (
-                  ""
-                ) : (
-                  <button onClick={() => setCurrentPage2(1)}>1</button>
-                )}
-
-                {pages2
-                  ?.slice(currentPage2 - 1, currentPage2 + 3)
-                  .map((i, index) =>
-                    i === pages2?.length ? (
-                      ""
-                    ) : (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentPage2(i)}
-                        className={currentPage2 === i ? "activePage" : ""}
-                      >
-                        {" "}
-                        {i}{" "}
-                      </button>
-                    )
-                  )}
-
-                <button
-                  onClick={() => setCurrentPage2(pages2?.length)}
-                  className={
-                    currentPage2 === pages2?.length ? "activePage" : ""
-                  }
-                >
-                  {" "}
-                  {pages2?.length}{" "}
-                </button>
-
-                {currentPage2 === pages2?.length ? (
-                  ""
-                ) : (
-                  <button onClick={() => Next()} className="nextBtn">
-                    {" "}
-                    <i className="fa-sharp fa-solid fa-forward"></i>
-                  </button>
-                )}
-              </div>
+            <div className="two_Sec" style={{ alignItems: "flex-start" }}>
+              <p>
+                {" "}
+                <strong>Description</strong>
+              </p>{" "}
+              : <p>{product.description}</p>
             </div>
-          </>
-        )}
+            <div className="two_Sec" style={{ alignItems: "flex-start" }}>
+              <p>
+                {" "}
+                <strong>Color</strong> :
+              </p>{" "}
+              <p>
+                {console.log("color value", product?.color)}
+                {product?.color?.map((i) => (
+                  <spam>{i}, </spam>
+                ))}
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
+      <MyVerticallyCenteredModalEdit
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
       <ToastContainer />
     </>
   );

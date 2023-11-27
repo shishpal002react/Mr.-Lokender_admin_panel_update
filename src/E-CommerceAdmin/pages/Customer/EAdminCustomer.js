@@ -91,7 +91,7 @@ const EAdminCustomer = () => {
         },
       });
 
-      setData(res.data);
+      setData(res.data, "user information ");
       console.log("admin support data", res.data);
     } catch (error) {
       console.log(error);

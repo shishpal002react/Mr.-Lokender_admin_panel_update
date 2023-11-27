@@ -39,7 +39,7 @@ function App() {
         <Route path="/Customer" element={<EAdminCustomer />} />
         <Route path="/VendorList" element={<EVendorList />} />
         <Route path="/Product" element={<EProduct />} />
-        <Route path="/product/:id" element={<ViewProduct />} />
+        <Route path="/single_product/:id" element={<ViewProduct />} />
         <Route path="/Category" element={<ECategory />} />
         <Route path="/SubCategory" element={<ESubCategory />} />
         <Route path="/pushNotification" element={<PushNotification />} />

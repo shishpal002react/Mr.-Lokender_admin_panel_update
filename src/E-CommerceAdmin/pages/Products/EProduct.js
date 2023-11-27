@@ -381,6 +381,7 @@ const EProduct = () => {
                     <th>Total Stock</th>
                     <th>Price</th>
                     <th>Discounted Price</th>
+
                     <th> </th>
                   </tr>
                 </thead>
@@ -405,7 +406,7 @@ const EProduct = () => {
                               <Menu.Item key="2">
                                 <div className="two_Sec_Div">
                                   <i className="fa-solid fa-eye"></i>
-                                  <Link to={`/seller/single/product/${i._id}`}>
+                                  <Link to={`/single_product/${i._id}`}>
                                     <p>View Product</p>
                                   </Link>
                                 </div>
