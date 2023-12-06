@@ -46,7 +46,7 @@ const EAdminOrders = () => {
         },
       });
       console.log("product from category section", res.data.orders);
-      setData(res.data.orders);
+      setData(res.data.orders.reverse());
       console.log("category", res.data);
     } catch (error) {
       console.log(error);
@@ -143,12 +143,14 @@ const EAdminOrders = () => {
               className="mb-3"
               onChange={(e) => setData(e.target.value)}
             >
-              <option disabled>--Edit Status--</option>
+              <option>--Edit Status--</option>
               <option value="delivered">Delivered</option>
               <option value="shipped">Shipped</option>
               <option value="canceled">Canceled</option>
             </Form.Select>
-            <Button variant="outline-success">Submit</Button>
+            <Button variant="outline-success" type="submit">
+              Submit
+            </Button>
           </Form>
         </Modal.Body>
       </Modal>
@@ -196,7 +198,7 @@ const EAdminOrders = () => {
                       <th>User</th>
                       <th>Total Price</th>
                       <th>Paid</th>
-                      <th>Delivered</th>
+                      <th>Delivered Address</th>
                       <th>Payment Method</th>
                       <th>Tax Price</th>
                       <th>Shipping Price</th>
@@ -214,24 +216,26 @@ const EAdminOrders = () => {
                         <td>
                           {" "}
                           <i className="fa-solid fa-indian-rupee-sign mr-1"></i>
-                          {i.totalPrice}{" "}
+                          {i.totalAmount}{" "}
                         </td>
                         <td>
                           {" "}
-                          {i.isPaid === true ? (
+                          {/* {i.paymentStatus === true ? (
                             <Badge bg="success">Paid</Badge>
                           ) : (
                             <Badge bg="danger">UnPaid</Badge>
-                          )}{" "}
+                          )}{" "} */}
+                          <Badge bg="success">{i.paymentStatus}</Badge>
                         </td>
-                        <td>
+                        {/* <td>
                           {" "}
                           {i.isDelivered === true ? (
                             <Badge bg="success">Delivered</Badge>
                           ) : (
                             <Badge bg="danger">Not Deliverd Yet</Badge>
                           )}{" "}
-                        </td>
+                        </td> */}
+                        <td>{i.address}</td>
                         <td> {i.paymentMethod} </td>
                         <td>
                           {" "}
@@ -244,7 +248,7 @@ const EAdminOrders = () => {
                           {i.shippingPrice}{" "}
                         </td>
                         <td>
-                          <Badge bg="success"> {i.status} </Badge>
+                          <Badge bg="success"> {i.orderStatus} </Badge>
                         </td>
                         {/* <td>
                           {" "}

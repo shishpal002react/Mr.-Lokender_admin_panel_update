@@ -118,13 +118,13 @@ const Login = () => {
               )}
             </button>
             <br />
-            <button
+            {/* <button
               type="button"
               onClick={() => navigate("/sellerLogin")}
               className="EcommerceVendorLogin"
             >
               Seller Panel
-            </button>
+            </button> */}
           </section>
         </form>
       </div>

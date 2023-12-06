@@ -5,7 +5,7 @@ import { RiCloseLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
 import { BiLogOutCircle } from "react-icons/bi";
 import { MdDashboardCustomize } from "react-icons/md";
-import { Store } from 'react-notifications-component';
+import { Store } from "react-notifications-component";
 
 const Sidebar = ({ hamb, setHamb }) => {
   const navigate = useNavigate();
@@ -16,23 +16,19 @@ const Sidebar = ({ hamb, setHamb }) => {
       link: "/dashboard ",
       name: "Dashboard",
     },
-   
+
     {
-      icon: (
-        <i className="fa-solid fa-user text-xl mr-3 rounded-full"></i>
-      ),
+      icon: <i className="fa-solid fa-user text-xl mr-3 rounded-full"></i>,
       link: "/Customer",
       name: "Customers",
     },
+    // {
+    //   icon: <i className="fa-solid fa-user-tie text-xl mr-3 rounded-full"></i>,
+    //   link: "/VendorList",
+    //   name: "Sellers",
+    // },
     {
-      icon: <i className="fa-solid fa-user-tie text-xl mr-3 rounded-full"></i>,
-      link: "/VendorList",
-      name: "Sellers",
-    },
-    {
-      icon: (
-    <i className="fa-solid fa-box text-xl mr-3 rounded-full"></i>
-      ),
+      icon: <i className="fa-solid fa-box text-xl mr-3 rounded-full"></i>,
       link: "/Product",
       name: "Products",
     },
@@ -43,7 +39,9 @@ const Sidebar = ({ hamb, setHamb }) => {
     },
 
     {
-      icon: <i className=" fa-solid fa-layer-group text-xl mr-3 rounded-full " />,
+      icon: (
+        <i className=" fa-solid fa-layer-group text-xl mr-3 rounded-full " />
+      ),
       link: "/SubCategory",
       name: "Sub-Category",
     },
@@ -71,13 +69,12 @@ const Sidebar = ({ hamb, setHamb }) => {
       link: "/Orders",
       name: "Orders",
     },
-   
+
     {
       icon: <i className="fa-solid fa-phone  text-xl mr-3 rounded-full"></i>,
       link: "/Support",
       name: "Help & Suppport",
     },
- 
 
     {
       icon: <i className="fa-solid fa-shield text-xl mr-3 rounded-full"></i>,
@@ -93,12 +90,12 @@ const Sidebar = ({ hamb, setHamb }) => {
       icon: <i className="fa-solid fa-phone  text-xl mr-3 rounded-full"></i>,
       link: "/customerquery",
       name: "Customer&Query",
-    }
+    },
   ];
 
   const logOut = () => {
-    localStorage.clear()
-    
+    localStorage.clear();
+
     navigate("/");
     Store.addNotification({
       title: "Logout Success",
@@ -110,8 +107,8 @@ const Sidebar = ({ hamb, setHamb }) => {
       animationOut: ["animate__animated", "animate__fadeOut"],
       dismiss: {
         duration: 2000,
-        onScreen: true
-      }
+        onScreen: true,
+      },
     });
   };
 

@@ -33,7 +33,7 @@ const EProduct = () => {
         },
       });
       console.log("product from shoes section", res.data);
-      setProduct(res.data.products?.reverse());
+      setProduct(res.data.products.reverse());
 
       console.log("admin product data", res.data);
     } catch (error) {
@@ -339,7 +339,7 @@ const EProduct = () => {
           className="tracking-widest text-slate-900 font-semibold uppercase"
           style={{ fontSize: "1.5rem" }}
         >
-          All Product's ( Total : {product?.length} )
+          s All Product's ( Total : {product?.length} )
         </span>
         <button
           onClick={() => {
@@ -349,6 +349,15 @@ const EProduct = () => {
           className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
         >
           Add Product
+        </button>
+        <button
+          onClick={() => {
+            // setEdit(false);
+            // setModalShow(true);
+          }}
+          className="md:py-2 px-3 md:px-4 py-1 rounded-sm bg-[#19376d] text-white tracking-wider"
+        >
+          Add Bulk Product
         </button>
       </div>
 

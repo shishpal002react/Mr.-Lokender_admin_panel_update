@@ -42,6 +42,8 @@ const ViewProduct = () => {
         setStock(product.stock);
         setBrand(product.brand);
         setSimType(product.simType);
+        setCategoryId(product?.category?._id);
+        setSubCategoryId(product?.subCategory?._id);
       }
     }, [props]);
 
@@ -62,15 +64,15 @@ const ViewProduct = () => {
       formdata.append("simType", simType);
 
       console.log("ls", localStorage.getItem("token"));
-      let url = `${BaseUrl()}api/v1/product/new/admin`;
+      let url = `${BaseUrl()}api/v1/product/${id}`;
       try {
-        const res = await axios.post(url, formdata, {
+        const res = await axios.put(url, formdata, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
         console.log("Product is create successfully", res.data);
-        toast("Product is create successfully", {
+        toast("Edit product is successfully", {
           position: toast.POSITION.TOP_CENTER,
         });
         setModalShow(false);
@@ -135,7 +137,7 @@ const ViewProduct = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {"Add Product Category"}
+            {"Edit product"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -305,16 +307,15 @@ const ViewProduct = () => {
               {/* (Racing Silver, 128 GB) (6 GB RAM) */}
             </p>
             <p className="Rating">
+              <strong>Rating</strong>
               <Badge bg="success"> {product.ratings}</Badge>{" "}
-              <span className="rat">{product.ratings}</span>{" "}
             </p>
             <p>
-              {" "}
+              <strong>Discount</strong>{" "}
               <Badge bg="success">{product.discountPercent}off</Badge>{" "}
             </p>
             <p>
-              {" "}
-              <Badge>{product.stock}</Badge>{" "}
+              <strong>Stock</strong> <Badge>{product.stock}</Badge>{" "}
             </p>
 
             <div className="two_Sec">
@@ -341,7 +342,10 @@ const ViewProduct = () => {
                 {" "}
                 <strong>Description</strong>
               </p>{" "}
-              : <p>{product.description}</p>
+              :{" "}
+              <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+                {product.description}
+              </p>
             </div>
             <div className="two_Sec" style={{ alignItems: "flex-start" }}>
               <p>
