@@ -28,6 +28,7 @@ import SellerSubCategory from "./SellerPanel/pages/SubCategory/SellerSubCategory
 import SellerOrders from "./SellerPanel/pages/Orders/sellerOrders";
 import CustomerQuery from "./E-CommerceAdmin/pages/CustomerQueary/CustomerQuery";
 import ProductSingleView from "./E-CommerceAdmin/pages/Seller/ProductSingleView";
+import Footer_Data from "./E-CommerceAdmin/pages/Footer_data/Footer_Data";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
           element={<ProductSingleView />}
         />
         <Route path="/customerquery" element={<CustomerQuery />} />
+        <Route path="/footer/data" element={<Footer_Data />} />
 
         {/* Selller */}
         <Route path="/sellerLogin" element={<SellerLogin />} />

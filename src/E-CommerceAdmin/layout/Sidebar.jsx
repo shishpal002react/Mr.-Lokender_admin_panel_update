@@ -82,6 +82,13 @@ const Sidebar = ({ hamb, setHamb }) => {
       name: "Privacy Policy",
     },
     {
+      icon: (
+        <i className=" fa-solid fa-layer-group text-xl mr-3 rounded-full " />
+      ),
+      link: "/footer/data",
+      name: "Footer Data",
+    },
+    {
       icon: <i className="fa-solid fa-barcode text-xl mr-3 rounded-full"></i>,
       link: "/terms",
       name: "Terms&Condition",
