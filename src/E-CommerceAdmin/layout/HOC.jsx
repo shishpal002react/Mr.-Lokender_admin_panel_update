@@ -10,7 +10,7 @@ const HOC = (Wcomponenet) => {
     return (
       <>
         <section
-          className="flex overflow-x-hidden relative "
+          className="flex relative "
           style={{ backgroundColor: "#f2f3f8" }}
         >
           {/* Sidebar */}

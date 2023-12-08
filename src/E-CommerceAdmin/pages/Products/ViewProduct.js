@@ -9,12 +9,17 @@ import axios from "axios";
 import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Carousel from "react-bootstrap/Carousel";
 
 const ViewProduct = () => {
   const { id } = useParams();
   // console.log("id is work", name);
   const [modalShow, setModalShow] = React.useState(false);
+  const [index, setIndex] = useState(0);
 
+  const handleSelect = (selectedIndex) => {
+    setIndex(selectedIndex);
+  };
   // post request
   function MyVerticallyCenteredModalEdit(props) {
     const [name, setName] = useState("");
@@ -28,6 +33,8 @@ const ViewProduct = () => {
     const [stock, setStock] = useState();
     const [brand, setBrand] = useState();
     const [simType, setSimType] = useState();
+    const [mrp, setMrp] = useState("");
+    const [offerPrice, setOfferPrice] = useState("");
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([]);
 
@@ -42,6 +49,8 @@ const ViewProduct = () => {
         setStock(product.stock);
         setBrand(product.brand);
         setSimType(product.simType);
+        setMrp(product.mrp);
+        setOfferPrice(product.offerPrice);
         setCategoryId(product?.category?._id);
         setSubCategoryId(product?.subCategory?._id);
       }
@@ -61,6 +70,8 @@ const ViewProduct = () => {
       formdata.append("subCategory", subCategoryId);
       formdata.append("stock", stock);
       formdata.append("brand", brand);
+      formdata.append("mrp", mrp);
+      formdata.append("offerPrice", offerPrice);
       formdata.append("simType", simType);
 
       console.log("ls", localStorage.getItem("token"));
@@ -156,6 +167,23 @@ const ViewProduct = () => {
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product MRP</Form.Label>
+              <Form.Control
+                type="text"
+                value={mrp}
+                onChange={(e) => setMrp(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Selling Price</Form.Label>
+              <Form.Control
+                type="text"
+                value={offerPrice}
+                s
+                onChange={(e) => setOfferPrice(e.target.value)}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -296,12 +324,21 @@ const ViewProduct = () => {
         </button>
       </div>
 
+      <div style={{ width: "70%", margin: "auto", marginTop: "20px" }}>
+        <Carousel activeIndex={index} onSelect={handleSelect}>
+          {product?.images?.map((item, i) => (
+            <Carousel.Item>
+              <img src={item} alt="no"></img>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      </div>
+
       <section className="sectionCont">
         <div className="Detail_Section">
-          <div className="Left_Cont">
-            <img src={product?.images?.[0]} alt="" />
-          </div>
-          <div className="right_Cont">
+          {/* <div className="Left_Cont"></div> */}
+          {/* <div className="right_Cont"> */}
+          <div style={{ width: "70%", margin: "auto", marginTop: "20px" }}>
             <p className="Head">
               {product.name}
               {/* (Racing Silver, 128 GB) (6 GB RAM) */}
@@ -318,16 +355,31 @@ const ViewProduct = () => {
               <strong>Stock</strong> <Badge>{product.stock}</Badge>{" "}
             </p>
 
+            <p>
+              <strong>Product MRP</strong>
+              {"    "}
+              <i className="fa-solid fa-indian-rupee-sign"></i>
+              {product?.mrp}
+            </p>
+
+            {/* <p>
+              <strong>Offer MRP</strong>
+              {"    "}
+              <i className="fa-solid fa-indian-rupee-sign"></i>
+              {product.offerPrice}
+            </p> */}
+
             <div className="two_Sec">
               <p className="first">
                 {" "}
                 <i className="fa-solid fa-indian-rupee-sign"></i>
-                {product.price}{" "}
+                {product.offerPrice}{" "}
               </p>
               <p className="second">
                 {" "}
                 <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
-                {product.price + product.discountAmount}{" "}
+                {/* {product.price + product.discountAmount}{" "} */}
+                {product.price}
               </p>
             </div>
 
@@ -344,20 +396,20 @@ const ViewProduct = () => {
               </p>{" "}
               :{" "}
               <p style={{ fontSize: "18px", fontWeight: "bold" }}>
-                {product.description}
+                {product?.description}
               </p>
             </div>
             <div className="two_Sec" style={{ alignItems: "flex-start" }}>
               <p>
                 {" "}
-                <strong>Color</strong> :
+                <strong>Color :</strong>
               </p>{" "}
-              <p>
+              <span>
                 {console.log("color value", product?.color)}
                 {product?.color?.map((i) => (
                   <spam>{i}, </spam>
                 ))}
-              </p>
+              </span>
             </div>
           </div>
         </div>

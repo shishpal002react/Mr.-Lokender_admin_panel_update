@@ -6,7 +6,7 @@ import Spinner from "react-bootstrap/Spinner";
 const SpinnerComp = () => {
   return (
     <Alert>
-      Loading 
+      Loading ...
       <Spinner
         animation="border"
         role="status"

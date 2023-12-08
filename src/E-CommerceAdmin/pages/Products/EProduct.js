@@ -78,6 +78,8 @@ const EProduct = () => {
     const [stock, setStock] = useState();
     const [brand, setBrand] = useState();
     const [simType, setSimType] = useState();
+    const [mrp, setMrp] = useState("");
+    const [offerPrice, setOfferPrice] = useState("");
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([]);
 
@@ -95,6 +97,8 @@ const EProduct = () => {
       formdata.append("subCategory", subCategoryId);
       formdata.append("stock", stock);
       formdata.append("brand", brand);
+      formdata.append("mrp", mrp);
+      formdata.append("offerPrice", offerPrice);
       formdata.append("simType", simType);
 
       console.log("ls", localStorage.getItem("token"));
@@ -189,6 +193,24 @@ const EProduct = () => {
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+              />
+            </Form.Group>
+            {/*  */}
+            <Form.Group className="mb-3">
+              <Form.Label>Product MRP</Form.Label>
+              <Form.Control
+                type="text"
+                value={mrp}
+                onChange={(e) => setMrp(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Selling Price</Form.Label>
+              <Form.Control
+                type="text"
+                value={offerPrice}
+                s
+                onChange={(e) => setOfferPrice(e.target.value)}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -388,7 +410,9 @@ const EProduct = () => {
                     <th>Reviews</th>
                     <th>Discount</th>
                     <th>Total Stock</th>
+                    <th>MRP</th>
                     <th>Price</th>
+                    <th>Selling Price</th>
                     <th>Discounted Price</th>
 
                     <th> </th>
@@ -405,7 +429,9 @@ const EProduct = () => {
                       <td>{i.numOfReviews}</td>
                       <td>{i.isDiscount}</td>
                       <td>{i.stock}</td>
+                      <td>{i.mrp}</td>
                       <td>{i.price}</td>
+                      <td>{i.offerPrice}</td>
                       <td>{i.discountedPrice}</td>
 
                       <td style={{ textAlign: "center" }}>

@@ -279,7 +279,7 @@ const PrivacyPolicy = () => {
       <section>
         <p className="headP">Dashboard / Privacy Policy</p>
         <div
-          className="pb-4 sticky top-0  w-full flex justify-between items-center"
+          className="pb-4  top-0  w-full flex justify-between items-center"
           style={{ width: "98%", marginLeft: "2%" }}
         >
           <span
