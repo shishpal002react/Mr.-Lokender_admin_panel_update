@@ -38,16 +38,15 @@ const Footer_Data = () => {
   const [data, setData] = useState([]);
   const getProducts = async () => {
     console.log("ls", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/privacy`;
+    let url = `${BaseUrl()}api/v1/detail`;
     try {
       const res = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log("product from shoes section", res.data.privacy);
-      setData(res.data.privacy.reverse());
-      console.log("admin product data", res.data.privacy);
+
+      setData(res.data.detail.reverse());
     } catch (error) {
       console.log(error);
     }
@@ -62,7 +61,7 @@ const Footer_Data = () => {
     console.log("customer id", id);
 
     console.log("ls data ", localStorage.getItem("token"));
-    let url = `${BaseUrl()}api/v1/privacy/${id}`;
+    let url = `${BaseUrl()}api/v1/detail/${id}`;
     try {
       const res = await axios.delete(url, {
         headers: {
@@ -89,7 +88,7 @@ const Footer_Data = () => {
 
   const TotolData = query
     ? data?.filter((i) =>
-        i?.Privacy?.toLowerCase().includes(query?.toLowerCase())
+        i?.title?.toLowerCase().includes(query?.toLowerCase())
       )
     : data;
 
@@ -117,16 +116,17 @@ const Footer_Data = () => {
 
   //post
   function MyVerticallyCenteredModal(props) {
-    const [privacy, setPrivacy] = useState("");
+    const [tittle, setTittle] = useState("");
+    const [content, setContent] = useState("");
 
     const postData = async (e) => {
       e.preventDefault();
       console.log("ls", localStorage.getItem("token"));
-      let url = `${BaseUrl()}api/v1/privacy`;
+      let url = `${BaseUrl()}api/v1/detail`;
       try {
         const res = await axios.post(
           url,
-          { privacy: privacy },
+          { detail: content, title: tittle },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -160,15 +160,22 @@ const Footer_Data = () => {
         <Modal.Body>
           <Form onSubmit={postData}>
             <Form.Group className="mb-3">
-              <FloatingLabel
-                controlId="floatingTextarea2"
-                label="Privacy Policy"
-              >
+              <FloatingLabel controlId="floatingTextarea2" label="Title">
                 <Form.Control
                   as="textarea"
                   placeholder="Leave a comment here"
-                  value={privacy}
-                  onChange={(e) => setPrivacy(e.target.value)}
+                  value={tittle}
+                  onChange={(e) => setTittle(e.target.value)}
+                />
+              </FloatingLabel>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <FloatingLabel controlId="floatingTextarea2" label="Description">
+                <Form.Control
+                  as="textarea"
+                  placeholder="Leave a comment here"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </FloatingLabel>
             </Form.Group>
@@ -191,24 +198,26 @@ const Footer_Data = () => {
 
   //edit privacy
   function MyVerticallyCenteredModalEdit(props) {
-    const [privacy, setPrivacy] = useState();
+    const [tittle, setTittle] = useState("");
+    const [content, setContent] = useState("");
     const [editId, setEditId] = useState("");
 
     useEffect(() => {
       if (props.show === true) {
         setEditId(id._id);
-        setPrivacy(id.privacy);
+        setTittle(id.title);
+        setContent(id.detail);
       }
     }, [props]);
 
     const handleEdit = async (e) => {
       e.preventDefault();
       console.log("ls", localStorage.getItem("token"));
-      let url = `${BaseUrl()}api/v1/privacy/${editId}`;
+      let url = `${BaseUrl()}api/v1/detail/${editId}`;
       try {
         const res = await axios.put(
           url,
-          { privacy: privacy },
+          { title: tittle, detail: content },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -241,15 +250,22 @@ const Footer_Data = () => {
         <Modal.Body>
           <Form onSubmit={handleEdit}>
             <Form.Group className="mb-3">
-              <FloatingLabel
-                controlId="floatingTextarea2"
-                label="Privacy Policy"
-              >
+              <FloatingLabel controlId="floatingTextarea2" label="Title">
                 <Form.Control
                   as="textarea"
                   placeholder="Leave a comment here"
-                  value={privacy}
-                  onChange={(e) => setPrivacy(e.target.value)}
+                  value={tittle}
+                  onChange={(e) => setTittle(e.target.value)}
+                />
+              </FloatingLabel>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <FloatingLabel controlId="floatingTextarea2" label="Description">
+                <Form.Control
+                  as="textarea"
+                  placeholder="Leave a comment here"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
                 />
               </FloatingLabel>
             </Form.Group>
@@ -321,15 +337,18 @@ const Footer_Data = () => {
                   <thead>
                     <tr>
                       <th>Number</th>
-                      <th>Privacy Policy</th>
+                      {/* <th>Privacy Policy</th> */}
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {slicedData?.map((i, index) => (
                       <tr key={index}>
-                        <td> #{index + 1}</td>
-                        <td>{i.privacy}</td>
+                        {/* <td> #{index + 1}</td> */}
+                        <td>
+                          <strong>#{index + 1}</strong>
+                          <strong> {i.title}</strong> <p>{i.detail}</p>
+                        </td>
                         <td>
                           <Dropdown
                             overlay={
