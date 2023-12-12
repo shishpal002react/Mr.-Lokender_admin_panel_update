@@ -25,7 +25,6 @@ html {
   font-family: Quicksand !important;
 }
 
-
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -538,4 +537,57 @@ html {
 }
 .Detail_Section .right_Cont ul {
   list-style-type: disc;
+}
+
+/* //scroller */
+.app1 {
+  margin-top: 30px;
+  position: relative;
+  width: 583px;
+  height: 221px;
+}
+
+.carousel {
+  overflow: hidden;
+}
+
+.slider {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  flex: 0 0 100%;
+}
+
+.dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.dot .active {
+  background-color: #333;
+}
+.image-text {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,  0,  0,  0.8);
 }

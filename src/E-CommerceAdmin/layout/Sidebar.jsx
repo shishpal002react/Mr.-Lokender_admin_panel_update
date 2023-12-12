@@ -22,11 +22,11 @@ const Sidebar = ({ hamb, setHamb }) => {
       link: "/Customer",
       name: "Customers",
     },
-    // {
-    //   icon: <i className="fa-solid fa-user-tie text-xl mr-3 rounded-full"></i>,
-    //   link: "/VendorList",
-    //   name: "Sellers",
-    // },
+    {
+      icon: <i className="fa-solid fa-user-tie text-xl mr-3 rounded-full"></i>,
+      link: "/sales_detail",
+      name: "sales Detail",
+    },
     {
       icon: <i className="fa-solid fa-box text-xl mr-3 rounded-full"></i>,
       link: "/Product",

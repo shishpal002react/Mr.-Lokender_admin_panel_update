@@ -8,6 +8,7 @@ import BaseUrl from "../../../BaseUrl";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SpinnerComp from "../../../SellerPanel/pages/Component/SpinnerComp";
 
 const EAdminOrders = () => {
   const [modalShow, setModalShow] = useState(false);
@@ -176,7 +177,8 @@ const EAdminOrders = () => {
         </div>
         <section className="sectionCont">
           {data?.length === 0 || !data ? (
-            <Alert>No Data Found</Alert>
+            // <Alert>No Data Found</Alert>
+            <SpinnerComp />
           ) : (
             <>
               <div className="filterBox">
