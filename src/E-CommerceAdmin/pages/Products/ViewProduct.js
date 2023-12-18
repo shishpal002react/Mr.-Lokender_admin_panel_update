@@ -32,7 +32,7 @@ const ViewProduct = () => {
     const [subCategoryId, setSubCategoryId] = useState("");
     const [stock, setStock] = useState();
     const [brand, setBrand] = useState();
-    const [simType, setSimType] = useState();
+
     const [mrp, setMrp] = useState("");
     const [offerPrice, setOfferPrice] = useState("");
     const [data1, setData1] = useState([]);
@@ -48,7 +48,7 @@ const ViewProduct = () => {
         setFeatures(product.features);
         setStock(product.stock);
         setBrand(product.brand);
-        setSimType(product.simType);
+
         setMrp(product.mrp);
         setOfferPrice(product.offerPrice);
         setCategoryId(product?.category?._id);
@@ -72,7 +72,6 @@ const ViewProduct = () => {
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
-      formdata.append("simType", simType);
 
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/product/${id}`;
@@ -257,14 +256,7 @@ const ViewProduct = () => {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Product sim Type</Form.Label>
-              <Form.Control
-                type="text"
-                value={simType}
-                onChange={(e) => setSimType(e.target.value)}
-              />
-            </Form.Group>
+
             <Button
               style={{
                 backgroundColor: "#19376d",
@@ -340,7 +332,7 @@ const ViewProduct = () => {
           {/* <div className="right_Cont"> */}
           <div style={{ width: "70%", margin: "auto", marginTop: "20px" }}>
             <p className="Head">
-              {product.name}
+              Product name :{product.name}
               {/* (Racing Silver, 128 GB) (6 GB RAM) */}
             </p>
             <p className="Rating">
@@ -372,18 +364,20 @@ const ViewProduct = () => {
             <div className="two_Sec">
               <p className="first">
                 {" "}
+                product Offer Price :
                 <i className="fa-solid fa-indian-rupee-sign"></i>
                 {product.offerPrice}{" "}
               </p>
               <p className="second">
                 {" "}
-                <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
+                Product Price :<i className="fa-solid fa-indian-rupee-sign"></i>{" "}
                 {/* {product.price + product.discountAmount}{" "} */}
                 {product.price}
               </p>
             </div>
 
             <ul>
+              <strong>Product features :</strong>
               {product?.features?.map((i) => (
                 <li>{i}</li>
               ))}

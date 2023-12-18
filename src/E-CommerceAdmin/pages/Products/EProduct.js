@@ -77,7 +77,7 @@ const EProduct = () => {
     const [subCategoryId, setSubCategoryId] = useState("");
     const [stock, setStock] = useState();
     const [brand, setBrand] = useState();
-    const [simType, setSimType] = useState();
+
     const [mrp, setMrp] = useState("");
     const [offerPrice, setOfferPrice] = useState("");
     const [data1, setData1] = useState([]);
@@ -99,7 +99,6 @@ const EProduct = () => {
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
-      formdata.append("simType", simType);
 
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/product/new/admin`;
@@ -284,14 +283,14 @@ const EProduct = () => {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Product sim Type</Form.Label>
               <Form.Control
                 type="text"
                 value={simType}
                 onChange={(e) => setSimType(e.target.value)}
               />
-            </Form.Group>
+            </Form.Group> */}
             <Button
               style={{
                 backgroundColor: "#19376d",
@@ -414,7 +413,6 @@ const EProduct = () => {
                     <th>Price</th>
                     <th>Selling Price</th>
                     <th>Discounted Price</th>
-
                     <th> </th>
                   </tr>
                 </thead>
@@ -427,7 +425,7 @@ const EProduct = () => {
                       </td>
                       <td>{i.name}</td>
                       <td>{i.numOfReviews}</td>
-                      <td>{i.isDiscount}</td>
+                      <td>{i.discountPercentage}</td>
                       <td>{i.stock}</td>
                       <td>{i.mrp}</td>
                       <td>{i.price}</td>
