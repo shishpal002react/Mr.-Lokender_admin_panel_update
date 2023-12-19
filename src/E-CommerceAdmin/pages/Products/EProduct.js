@@ -70,24 +70,46 @@ const EProduct = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [color, setColor] = useState("");
-    const [images, setImages] = useState();
+    const [image, setImages] = useState("");
     const [price, setPrice] = useState();
     const [features, setFeatures] = useState();
     const [categoryId, setCategoryId] = useState("");
     const [subCategoryId, setSubCategoryId] = useState("");
     const [stock, setStock] = useState();
     const [brand, setBrand] = useState();
-
     const [mrp, setMrp] = useState("");
     const [offerPrice, setOfferPrice] = useState("");
+    const [sizePricePrice, setPricePrice] = useState("");
+    const [sizePriceSize, setPriceSize] = useState("");
+    const [sizePriceStock, setPriceStock] = useState("");
+
+    const multipleData = {
+      sizePriceSize,
+      sizePricePrice,
+      sizePriceStock,
+    };
+
+    const [sizePrice, setSizePrice] = useState(multipleData);
+
+    // data array
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([]);
 
+    //color
+    // const [colorArray, setColorArray] = useState([]);
+
+    // const colorSelector = () => {
+    //   setColorArray((prev) => [...prev, colors]);
+    //   setColor("");
+    // };
+
+    // const colorRemover = (index) => {
+    //   setColorArray((prev) => prev.filter((_, i) => i !== index));
+    // };
+
     const postData = async (e) => {
       e.preventDefault();
-
       const formdata = new FormData();
-      formdata.append("image", images);
       formdata.append("name", name);
       formdata.append("description", description);
       formdata.append("features", features);
@@ -99,6 +121,9 @@ const EProduct = () => {
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
+      Array.from(image).forEach((img) => {
+        formdata.append("image", img);
+      });
 
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/product/new/admin`;
@@ -141,9 +166,9 @@ const EProduct = () => {
       }
     }, [props]);
 
-    //category data
+    // subcateagory
     const subCategoryData = async () => {
-      let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+      let url = `${BaseUrl()}api/v1/admin/subcategories/${categoryId}`;
       try {
         const res = await axios.get(url, {
           headers: {
@@ -151,17 +176,15 @@ const EProduct = () => {
           },
         });
         //please check again
-        setData2(res.data.categories);
+        setData2(res.data.subcategories);
       } catch (error) {
         console.log(error);
       }
     };
 
     useEffect(() => {
-      if (props.show === true) {
-        subCategoryData();
-      }
-    }, [props]);
+      subCategoryData();
+    }, [categoryId]);
 
     return (
       <Modal
@@ -213,6 +236,14 @@ const EProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
+              <Form.Label>Product Price</Form.Label>
+              <Form.Control
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Label>Product Color</Form.Label>
               <Form.Control
                 type="text"
@@ -244,14 +275,7 @@ const EProduct = () => {
                   <option value={item._id}>{item.name}</option>
                 ))}
             </Form.Select>
-            <Form.Group className="mb-3">
-              <Form.Label>Product Price</Form.Label>
-              <Form.Control
-                type="text"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-            </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Product Feature</Form.Label>
               <Form.Control
@@ -264,7 +288,8 @@ const EProduct = () => {
               <Form.Label>Product Image</Form.Label>
               <Form.Control
                 type="file"
-                onChange={(e) => setImages(e.target.files[0])}
+                onChange={(e) => setImages(e.target.files)}
+                multiple
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -283,14 +308,7 @@ const EProduct = () => {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Group>
-            {/* <Form.Group className="mb-3">
-              <Form.Label>Product sim Type</Form.Label>
-              <Form.Control
-                type="text"
-                value={simType}
-                onChange={(e) => setSimType(e.target.value)}
-              />
-            </Form.Group> */}
+
             <Button
               style={{
                 backgroundColor: "#19376d",
@@ -360,7 +378,7 @@ const EProduct = () => {
           className="tracking-widest text-slate-900 font-semibold uppercase"
           style={{ fontSize: "1.5rem" }}
         >
-          s All Product's ( Total : {product?.length} )
+          All Product's ( Total : {product?.length} )
         </span>
         <button
           onClick={() => {
@@ -421,7 +439,11 @@ const EProduct = () => {
                     <tr key={index}>
                       <td> {index + 1} </td>
                       <td>
-                        <img src={i.images} alt="" style={{ width: "60px" }} />
+                        <img
+                          src={i?.images?.[0]}
+                          alt=""
+                          style={{ width: "60px" }}
+                        />
                       </td>
                       <td>{i.name}</td>
                       <td>{i.numOfReviews}</td>

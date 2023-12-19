@@ -10,10 +10,10 @@ import { Table, Modal, Form, Button, Alert } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Carousel from "react-bootstrap/Carousel";
+import { ImCross } from "react-icons/im";
 
 const ViewProduct = () => {
   const { id } = useParams();
-  // console.log("id is work", name);
   const [modalShow, setModalShow] = React.useState(false);
   const [index, setIndex] = useState(0);
 
@@ -25,7 +25,7 @@ const ViewProduct = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [color, setColor] = useState("");
-    const [images, setImages] = useState();
+    const [image, setImages] = useState("");
     const [price, setPrice] = useState();
     const [features, setFeatures] = useState();
     const [categoryId, setCategoryId] = useState("");
@@ -43,12 +43,11 @@ const ViewProduct = () => {
         setName(product.name);
         setDescription(product.description);
         setColor(product.color);
-        setImages(product.images);
+        setImages(product.images?.[0]);
         setPrice(product.price);
         setFeatures(product.features);
         setStock(product.stock);
         setBrand(product.brand);
-
         setMrp(product.mrp);
         setOfferPrice(product.offerPrice);
         setCategoryId(product?.category?._id);
@@ -60,7 +59,7 @@ const ViewProduct = () => {
       e.preventDefault();
 
       const formdata = new FormData();
-      formdata.append("image", images);
+
       formdata.append("name", name);
       formdata.append("description", description);
       formdata.append("features", features);
@@ -72,6 +71,9 @@ const ViewProduct = () => {
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
+      Array.from(image).forEach((img) => {
+        formdata.append("image", img);
+      });
 
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/product/${id}`;
@@ -115,9 +117,9 @@ const ViewProduct = () => {
       }
     }, [props]);
 
-    //category data
+    //subcategory data
     const subCategoryData = async () => {
-      let url = `${BaseUrl()}api/v1/admin/allSubCategory`;
+      let url = `${BaseUrl()}api/v1/admin/subcategories/${categoryId}`;
       try {
         const res = await axios.get(url, {
           headers: {
@@ -125,17 +127,15 @@ const ViewProduct = () => {
           },
         });
         //please check again
-        setData2(res.data.categories);
+        setData2(res.data.subcategories);
       } catch (error) {
         console.log(error);
       }
     };
 
     useEffect(() => {
-      if (props.show === true) {
-        subCategoryData();
-      }
-    }, [props]);
+      subCategoryData();
+    }, [categoryId]);
 
     return (
       <Modal
@@ -177,12 +177,20 @@ const ViewProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Product Selling Price</Form.Label>
+              <Form.Label>Product OfferPrice Price</Form.Label>
               <Form.Control
                 type="text"
                 value={offerPrice}
                 s
                 onChange={(e) => setOfferPrice(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Product Price</Form.Label>
+              <Form.Control
+                type="text"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -217,14 +225,7 @@ const ViewProduct = () => {
                   <option value={item._id}>{item.name}</option>
                 ))}
             </Form.Select>
-            <Form.Group className="mb-3">
-              <Form.Label>Product Price</Form.Label>
-              <Form.Control
-                type="text"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              />
-            </Form.Group>
+
             <Form.Group className="mb-3">
               <Form.Label>Product Feature</Form.Label>
               <Form.Control
@@ -237,7 +238,8 @@ const ViewProduct = () => {
               <Form.Label>Product Image</Form.Label>
               <Form.Control
                 type="file"
-                onChange={(e) => setImages(e.target.files[0])}
+                onChange={(e) => setImages(e.target.files)}
+                multiple
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -316,7 +318,7 @@ const ViewProduct = () => {
         </button>
       </div>
 
-      <div style={{ width: "70%", margin: "auto", marginTop: "20px" }}>
+      {/* <div style={{ width: "70%", margin: "auto", marginTop: "20px" }}>
         <Carousel activeIndex={index} onSelect={handleSelect}>
           {product?.images?.map((item, i) => (
             <Carousel.Item>
@@ -324,6 +326,44 @@ const ViewProduct = () => {
             </Carousel.Item>
           ))}
         </Carousel>
+      </div> */}
+      <div
+        style={{
+          width: "80%",
+          margin: "auto",
+          marginTop: "20px",
+          height: "auto",
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
+        {product?.images?.map((item, i) => (
+          <div
+            style={{
+              height: "100%",
+              width: "40%",
+              margin: "20px",
+            }}
+          >
+            <ImCross
+              style={{
+                paddingTop: "10px",
+                paddingRights: "10px",
+                cursor: "pointer",
+              }}
+            />
+            <img
+              style={{
+                backgroundImage: "cover",
+                padding: "10px",
+                height: "100%",
+                width: "100%",
+              }}
+              src={item}
+              alt="no"
+            ></img>
+          </div>
+        ))}
       </div>
 
       <section className="sectionCont">
@@ -332,7 +372,7 @@ const ViewProduct = () => {
           {/* <div className="right_Cont"> */}
           <div style={{ width: "70%", margin: "auto", marginTop: "20px" }}>
             <p className="Head">
-              Product name :{product.name}
+              <strong> Product name </strong>:{product.name}
               {/* (Racing Silver, 128 GB) (6 GB RAM) */}
             </p>
             <p className="Rating">
@@ -341,7 +381,7 @@ const ViewProduct = () => {
             </p>
             <p>
               <strong>Discount</strong>{" "}
-              <Badge bg="success">{product.discountPercent}off</Badge>{" "}
+              <Badge bg="success">{product.discountPercent} off</Badge>{" "}
             </p>
             <p>
               <strong>Stock</strong> <Badge>{product.stock}</Badge>{" "}
@@ -364,13 +404,14 @@ const ViewProduct = () => {
             <div className="two_Sec">
               <p className="first">
                 {" "}
-                product Offer Price :
+                <strong>product Offer Price </strong> :
                 <i className="fa-solid fa-indian-rupee-sign"></i>
                 {product.offerPrice}{" "}
               </p>
               <p className="second">
                 {" "}
-                Product Price :<i className="fa-solid fa-indian-rupee-sign"></i>{" "}
+                <strong> Product Price </strong>:
+                <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
                 {/* {product.price + product.discountAmount}{" "} */}
                 {product.price}
               </p>
@@ -384,20 +425,15 @@ const ViewProduct = () => {
             </ul>
 
             <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-              <p>
-                {" "}
-                <strong>Description</strong>
-              </p>{" "}
-              :{" "}
+              {" "}
+              <strong>Description</strong> :{" "}
               <p style={{ fontSize: "18px", fontWeight: "bold" }}>
                 {product?.description}
               </p>
             </div>
             <div className="two_Sec" style={{ alignItems: "flex-start" }}>
-              <p>
-                {" "}
-                <strong>Color :</strong>
-              </p>{" "}
+              {" "}
+              <strong>Color :</strong>{" "}
               <span>
                 {console.log("color value", product?.color)}
                 {product?.color?.map((i) => (
