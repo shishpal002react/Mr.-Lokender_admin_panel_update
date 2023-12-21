@@ -67,57 +67,79 @@ const EProduct = () => {
 
   // post request
   function MyVerticallyCenteredModal(props) {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [color, setColor] = useState("");
-    const [image, setImages] = useState("");
-    const [price, setPrice] = useState();
-    const [features, setFeatures] = useState();
-    const [categoryId, setCategoryId] = useState("");
-    const [subCategoryId, setSubCategoryId] = useState("");
-    const [stock, setStock] = useState();
-    const [brand, setBrand] = useState();
-    const [mrp, setMrp] = useState("");
-    const [offerPrice, setOfferPrice] = useState("");
-    const [sizePricePrice, setPricePrice] = useState("");
-    const [sizePriceSize, setPriceSize] = useState("");
-    const [sizePriceStock, setPriceStock] = useState("");
-
-    const multipleData = {
-      sizePriceSize,
-      sizePricePrice,
-      sizePriceStock,
-    };
-
-    const [sizePrice, setSizePrice] = useState(multipleData);
-
     // data array
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([]);
+    //STATE
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [image, setImages] = useState("");
+    const [price, setPrice] = useState();
+    const [categoryId, setCategoryId] = useState("");
+    const [subCategoryId, setSubCategoryId] = useState("");
 
-    //color
-    // const [colorArray, setColorArray] = useState([]);
+    const [brand, setBrand] = useState();
+    const [mrp, setMrp] = useState("");
+    const [offerPrice, setOfferPrice] = useState("");
+    //multiple product details
+    const [sizePriceSize, setPriceSize] = useState("");
+    const [sizePriceStock, setPriceStock] = useState("");
+    const [sizePrice, setSizePrice] = useState([]);
+    //color and image
+    const [productImage, setProductImage] = useState("");
+    const [productImageUrl, setProductImageUrl] = useState("");
+    const [productName, setProductName] = useState("");
+    const [productArray, setProductArray] = useState([]);
+    //features
+    const [features, setFeatures] = useState("");
+    const [featureArray, setFeatureArray] = useState([]);
 
-    // const colorSelector = () => {
-    //   setColorArray((prev) => [...prev, colors]);
-    //   setColor("");
-    // };
+    useEffect(() => {
+      const imageURL = async () => {
+        let url = `${BaseUrl()}api/v1/image`;
+        const formdata = new FormData();
+        formdata.append("image", productImage);
+        try {
+          const res = await axios.post(url, formdata, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          setProductImageUrl(res?.data?.data?.image);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      imageURL();
+    }, [productImage]);
 
-    // const colorRemover = (index) => {
-    //   setColorArray((prev) => prev.filter((_, i) => i !== index));
-    // };
+    const featureArrayFunction = () => {
+      setFeatureArray((prev) => [...prev, features]);
+      setFeatures("");
+    };
+
+    const multiple_Product_color_name = () => {
+      setProductArray((prev) => [...prev, { productImageUrl, productName }]);
+      setProductImageUrl("");
+      setProductName("");
+    };
+
+    const multiple_adder = () => {
+      setSizePrice((prev) => [...prev, { sizePriceSize, sizePriceStock }]);
+      setPriceSize("");
+      setPriceStock("");
+    };
 
     const postData = async (e) => {
       e.preventDefault();
       const formdata = new FormData();
       formdata.append("name", name);
       formdata.append("description", description);
-      formdata.append("features", features);
-      formdata.append("color", color);
+
       formdata.append("price", price);
       formdata.append("category", categoryId);
       formdata.append("subCategory", subCategoryId);
-      formdata.append("stock", stock);
+
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
@@ -125,7 +147,20 @@ const EProduct = () => {
         formdata.append("image", img);
       });
 
-      console.log("ls", localStorage.getItem("token"));
+      featureArray.forEach((item, i) => {
+        formdata.append(`features[${i}]`, item);
+      });
+
+      sizePrice.forEach((item, i) => {
+        formdata.append(`sizePrice[${i}][size]`, item.sizePriceSize);
+        formdata.append(`sizePrice[${i}][stock]`, item.sizePriceStock);
+      });
+
+      productArray.forEach((item, i) => {
+        formdata.append(`colors[${i}][name]`, item.productName);
+        formdata.append(`colors[${i}][image]`, item.productImageUrl);
+      });
+
       let url = `${BaseUrl()}api/v1/product/new/admin`;
       try {
         const res = await axios.post(url, formdata, {
@@ -244,12 +279,54 @@ const EProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Product Color</Form.Label>
+              <Form.Label>Product Size and Stock </Form.Label>
               <Form.Control
                 type="text"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
+                value={sizePriceSize}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+                placeholder="Product Size ..."
+                onChange={(e) => setPriceSize(e.target.value)}
               />
+
+              <Form.Control
+                type="text"
+                placeholder="Product Stock ..."
+                value={sizePriceStock}
+                onChange={(e) => setPriceStock(e.target.value)}
+              />
+
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => multiple_adder()}
+              >
+                Add
+              </Button>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Color Image and Name</Form.Label>
+              <Form.Control
+                type="file"
+                placeholder="Product Image ..."
+                onChange={(e) => setProductImage(e.target.files[0])}
+              />
+              <Form.Control
+                type="text"
+                value={productName}
+                style={{ marginTop: "10px" }}
+                placeholder="Product Color Name ..."
+                onChange={(e) => setProductName(e.target.value)}
+              />
+
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => multiple_Product_color_name()}
+              >
+                Add
+              </Button>
             </Form.Group>
             {/* category id */}
             <Form.Select
@@ -283,6 +360,15 @@ const EProduct = () => {
                 value={features}
                 onChange={(e) => setFeatures(e.target.value)}
               />
+
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => featureArrayFunction()}
+              >
+                Add
+              </Button>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Product Image</Form.Label>
@@ -293,14 +379,6 @@ const EProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Product Stock</Form.Label>
-              <Form.Control
-                type="text"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
               <Form.Label>Product Brand</Form.Label>
               <Form.Control
                 type="text"
@@ -308,7 +386,6 @@ const EProduct = () => {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Group>
-
             <Button
               style={{
                 backgroundColor: "#19376d",
@@ -324,6 +401,8 @@ const EProduct = () => {
       </Modal>
     );
   }
+
+  //edit product and image
 
   // Pagination
   const [currentPage2, setCurrentPage2] = useState(1);
@@ -540,6 +619,7 @@ const EProduct = () => {
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
+
       <ToastContainer />
     </>
   );

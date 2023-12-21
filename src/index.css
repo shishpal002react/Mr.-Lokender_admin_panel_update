@@ -591,3 +591,21 @@ html {
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0,  0,  0,  0.8);
 }
+
+/* product data */
+.displayFlex {
+  display: flex;
+}
+.product_image_size_parent {
+  display: flex;
+  margin: 2%;
+}
+@media (max-width: 400px) {
+  .displayFlex {
+    display: block;
+  }
+  .product_image_size_parent {
+    display: block;
+    margin: 4%;
+  }
+}

@@ -17,43 +17,68 @@ const ViewProduct = () => {
   const [modalShow, setModalShow] = React.useState(false);
   const [index, setIndex] = useState(0);
 
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
   // post request
   function MyVerticallyCenteredModalEdit(props) {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [color, setColor] = useState("");
+
     const [image, setImages] = useState("");
-    const [price, setPrice] = useState();
-    const [features, setFeatures] = useState();
+    const [price, setPrice] = useState("");
     const [categoryId, setCategoryId] = useState("");
     const [subCategoryId, setSubCategoryId] = useState("");
-    const [stock, setStock] = useState();
-    const [brand, setBrand] = useState();
 
+    const [brand, setBrand] = useState();
     const [mrp, setMrp] = useState("");
     const [offerPrice, setOfferPrice] = useState("");
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([]);
-
+    //multiple product details
+    const [sizePriceSize, setPriceSize] = useState("");
+    const [sizePriceStock, setPriceStock] = useState("");
+    const [sizePrice, setSizePrice] = useState([]);
+    //color and image
+    const [productImage, setProductImage] = useState("");
+    const [productImageUrl, setProductImageUrl] = useState("");
+    const [productName, setProductName] = useState("");
+    const [productArray, setProductArray] = useState([]);
+    //features
+    const [features, setFeatures] = useState("");
+    const [featureArray, setFeatureArray] = useState([]);
     useEffect(() => {
-      if (props.show === true) {
-        setName(product.name);
-        setDescription(product.description);
-        setColor(product.color);
-        setImages(product.images?.[0]);
-        setPrice(product.price);
-        setFeatures(product.features);
-        setStock(product.stock);
-        setBrand(product.brand);
-        setMrp(product.mrp);
-        setOfferPrice(product.offerPrice);
-        setCategoryId(product?.category?._id);
-        setSubCategoryId(product?.subCategory?._id);
-      }
-    }, [props]);
+      const imageURL = async () => {
+        let url = `${BaseUrl()}api/v1/image`;
+        const formdata = new FormData();
+        formdata.append("image", productImage);
+        try {
+          const res = await axios.post(url, formdata, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          setProductImageUrl(res?.data?.data?.image);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      imageURL();
+    }, [productImage]);
+
+    const featureArrayFunction = () => {
+      setFeatureArray((prev) => [...prev, features]);
+      setFeatures("");
+    };
+
+    const multiple_Product_color_name = () => {
+      setProductArray((prev) => [...prev, { productImageUrl, productName }]);
+      setProductImageUrl("");
+      setProductName("");
+    };
+
+    const multiple_adder = () => {
+      setSizePrice((prev) => [...prev, { sizePriceSize, sizePriceStock }]);
+      setPriceSize("");
+      setPriceStock("");
+    };
 
     const postData = async (e) => {
       e.preventDefault();
@@ -62,17 +87,30 @@ const ViewProduct = () => {
 
       formdata.append("name", name);
       formdata.append("description", description);
-      formdata.append("features", features);
-      formdata.append("color", color);
+
       formdata.append("price", price);
       formdata.append("category", categoryId);
       formdata.append("subCategory", subCategoryId);
-      formdata.append("stock", stock);
+
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
       Array.from(image).forEach((img) => {
         formdata.append("image", img);
+      });
+
+      featureArray.forEach((item, i) => {
+        formdata.append(`features[${i}]`, item);
+      });
+
+      sizePrice.forEach((item, i) => {
+        formdata.append(`sizePrice[${i}][size]`, item.sizePriceSize);
+        formdata.append(`sizePrice[${i}][stock]`, item.sizePriceStock);
+      });
+
+      productArray.forEach((item, i) => {
+        formdata.append(`colors[${i}][name]`, item.productName);
+        formdata.append(`colors[${i}][image]`, item.productImageUrl);
       });
 
       console.log("ls", localStorage.getItem("token"));
@@ -83,7 +121,7 @@ const ViewProduct = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        console.log("Product is create successfully", res.data);
+
         toast("Edit product is successfully", {
           position: toast.POSITION.TOP_CENTER,
         });
@@ -137,6 +175,23 @@ const ViewProduct = () => {
       subCategoryData();
     }, [categoryId]);
 
+    useEffect(() => {
+      if (props.show === true) {
+        setName(product.name);
+        setDescription(product.description);
+
+        setImages(product.images?.[0]);
+        setPrice(product.price);
+        setFeatures(product.features);
+
+        setBrand(product.brand);
+        setMrp(product.mrp);
+        setOfferPrice(product.offerPrice);
+        setCategoryId(product?.category?._id);
+        setSubCategoryId(product?.subCategory?._id);
+      }
+    }, [props]);
+
     return (
       <Modal
         {...props}
@@ -147,7 +202,7 @@ const ViewProduct = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {"Edit product"}
+            {"Add Product Category"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -168,6 +223,7 @@ const ViewProduct = () => {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </Form.Group>
+            {/*  */}
             <Form.Group className="mb-3">
               <Form.Label>Product MRP</Form.Label>
               <Form.Control
@@ -177,7 +233,7 @@ const ViewProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Product OfferPrice Price</Form.Label>
+              <Form.Label>Product Selling Price</Form.Label>
               <Form.Control
                 type="text"
                 value={offerPrice}
@@ -194,12 +250,54 @@ const ViewProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Product Color</Form.Label>
+              <Form.Label>Product Size and Stock </Form.Label>
               <Form.Control
                 type="text"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
+                value={sizePriceSize}
+                style={{ marginTop: "10px", marginBottom: "10px" }}
+                placeholder="Product Size ..."
+                onChange={(e) => setPriceSize(e.target.value)}
               />
+
+              <Form.Control
+                type="text"
+                placeholder="Product Stock ..."
+                value={sizePriceStock}
+                onChange={(e) => setPriceStock(e.target.value)}
+              />
+
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => multiple_adder()}
+              >
+                Add
+              </Button>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Color Image and Name</Form.Label>
+              <Form.Control
+                type="file"
+                placeholder="Product Image ..."
+                onChange={(e) => setProductImage(e.target.files[0])}
+              />
+              <Form.Control
+                type="text"
+                value={productName}
+                style={{ marginTop: "10px" }}
+                placeholder="Product Color Name ..."
+                onChange={(e) => setProductName(e.target.value)}
+              />
+
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => multiple_Product_color_name()}
+              >
+                Add
+              </Button>
             </Form.Group>
             {/* category id */}
             <Form.Select
@@ -233,6 +331,15 @@ const ViewProduct = () => {
                 value={features}
                 onChange={(e) => setFeatures(e.target.value)}
               />
+
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => featureArrayFunction()}
+              >
+                Add
+              </Button>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Product Image</Form.Label>
@@ -243,14 +350,6 @@ const ViewProduct = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Product Stock</Form.Label>
-              <Form.Control
-                type="text"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
               <Form.Label>Product Brand</Form.Label>
               <Form.Control
                 type="text"
@@ -258,7 +357,6 @@ const ViewProduct = () => {
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Group>
-
             <Button
               style={{
                 backgroundColor: "#19376d",
@@ -295,6 +393,46 @@ const ViewProduct = () => {
   useEffect(() => {
     getProducts();
   }, []);
+
+  //delete api images
+  const handleDeleteImage = async (imageId) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/delete/product/${id}/image/${imageId}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Image Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //delete api color and image
+  const handleDeleteImageandColor = async (imageId) => {
+    console.log(id);
+    console.log("ls", localStorage.getItem("token"));
+    let url = `${BaseUrl()}api/v1/delete/product/${id}/color/${imageId}`;
+    try {
+      const res = await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Color and Name Delete successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -350,7 +488,9 @@ const ViewProduct = () => {
                 paddingTop: "10px",
                 paddingRights: "10px",
                 cursor: "pointer",
+                fontSize: "20px",
               }}
+              onClick={() => handleDeleteImage(item._id)}
             />
             <img
               style={{
@@ -359,7 +499,7 @@ const ViewProduct = () => {
                 height: "100%",
                 width: "100%",
               }}
-              src={item}
+              src={item?.image}
               alt="no"
             ></img>
           </div>
@@ -383,9 +523,66 @@ const ViewProduct = () => {
               <strong>Discount</strong>{" "}
               <Badge bg="success">{product.discountPercent} off</Badge>{" "}
             </p>
-            <p>
+            {/* <p>
               <strong>Stock</strong> <Badge>{product.stock}</Badge>{" "}
-            </p>
+            </p> */}
+
+            <div>
+              {product?.colors?.length > 0 && (
+                <div className="product_image_size_parent">
+                  <p>Color : </p>
+                  {product?.colors?.slice(0, 5)?.map((item) => (
+                    <div
+                      style={{
+                        width: "150px",
+
+                        margin: "15px",
+                        textAlign: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <div>
+                        <ImCross
+                          style={{
+                            position: "relative",
+                            paddingTop: "10px",
+                            paddingRights: "10px",
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            left: "0",
+                          }}
+                          onClick={() => handleDeleteImageandColor(item._id)}
+                        />
+                        <img
+                          src={item?.image}
+                          alt=""
+                          style={{ objectFit: "cover", padding: "10px" }}
+                        />
+                      </div>
+                      <p>{item?.name}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="product_image_size_parent">
+                <p>Sizes : </p>
+                {product?.sizePrice?.slice(0, 5)?.map((item) => (
+                  <div
+                    style={{
+                      width: "100px",
+                      height: "50px",
+                      margin: "15px",
+                      textAlign: "center",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <p>Size : {item?.size}</p>
+                    <p>Stock :{item?.stock}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             <p>
               <strong>Product MRP</strong>
@@ -393,13 +590,6 @@ const ViewProduct = () => {
               <i className="fa-solid fa-indian-rupee-sign"></i>
               {product?.mrp}
             </p>
-
-            {/* <p>
-              <strong>Offer MRP</strong>
-              {"    "}
-              <i className="fa-solid fa-indian-rupee-sign"></i>
-              {product.offerPrice}
-            </p> */}
 
             <div className="two_Sec">
               <p className="first">
@@ -417,8 +607,8 @@ const ViewProduct = () => {
               </p>
             </div>
 
+            <strong>Product features :</strong>
             <ul>
-              <strong>Product features :</strong>
               {product?.features?.map((i) => (
                 <li>{i}</li>
               ))}
@@ -427,11 +617,11 @@ const ViewProduct = () => {
             <div className="two_Sec" style={{ alignItems: "flex-start" }}>
               {" "}
               <strong>Description</strong> :{" "}
-              <p style={{ fontSize: "18px", fontWeight: "bold" }}>
+              <span style={{ fontSize: "18px", fontWeight: "bold" }}>
                 {product?.description}
-              </p>
+              </span>
             </div>
-            <div className="two_Sec" style={{ alignItems: "flex-start" }}>
+            {/* <div className="two_Sec" style={{ alignItems: "flex-start" }}>
               {" "}
               <strong>Color :</strong>{" "}
               <span>
@@ -440,7 +630,7 @@ const ViewProduct = () => {
                   <spam>{i}, </spam>
                 ))}
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
       </section>
