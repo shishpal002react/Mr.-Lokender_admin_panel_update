@@ -211,7 +211,7 @@ const ViewProduct = () => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             {" "}
-            {"Add Product Category"}
+            {"Edit Product "}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
