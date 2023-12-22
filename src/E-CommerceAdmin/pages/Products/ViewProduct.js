@@ -33,51 +33,61 @@ const ViewProduct = () => {
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([]);
     //multiple product details
-    const [sizePriceSize, setPriceSize] = useState("");
-    const [sizePriceStock, setPriceStock] = useState("");
-    const [sizePrice, setSizePrice] = useState([]);
+    // const [sizePriceSize, setPriceSize] = useState("");
+    // const [sizePriceStock, setPriceStock] = useState("");
+    // const [sizePrice, setSizePrice] = useState([]);
     //color and image
     const [productImage, setProductImage] = useState("");
-    const [productImageUrl, setProductImageUrl] = useState("");
     const [productName, setProductName] = useState("");
-    const [productArray, setProductArray] = useState([]);
     //features
     const [features, setFeatures] = useState("");
     const [featureArray, setFeatureArray] = useState([]);
-    useEffect(() => {
-      const imageURL = async () => {
-        let url = `${BaseUrl()}api/v1/image`;
-        const formdata = new FormData();
-        formdata.append("image", productImage);
-        try {
-          const res = await axios.post(url, formdata, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          setProductImageUrl(res?.data?.data?.image);
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      imageURL();
-    }, [productImage]);
 
     const featureArrayFunction = () => {
       setFeatureArray((prev) => [...prev, features]);
       setFeatures("");
     };
 
-    const multiple_Product_color_name = () => {
-      setProductArray((prev) => [...prev, { productImageUrl, productName }]);
-      setProductImageUrl("");
-      setProductName("");
+    const multiple_Product_color_name = async () => {
+      let url = `${BaseUrl()}api/v1/color/${id}`;
+      const formdata = new FormData();
+      formdata.append("name", productName);
+      formdata.append("image", productImage);
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        setProductName("");
+        getProducts();
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    const multiple_adder = () => {
-      setSizePrice((prev) => [...prev, { sizePriceSize, sizePriceStock }]);
-      setPriceSize("");
-      setPriceStock("");
+    // const multiple_adder = () => {
+    //   setSizePrice((prev) => [...prev, { sizePriceSize, sizePriceStock }]);
+    //   setPriceSize("");
+    //   setPriceStock("");
+    // };
+
+    const upload_image = async () => {
+      let url = `${BaseUrl()}api/v1/add/image/${id}`;
+      const formdata = new FormData();
+      formdata.append("image", image);
+      try {
+        const res = await axios.post(url, formdata, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        getProducts();
+        setImages("");
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     const postData = async (e) => {
@@ -95,23 +105,24 @@ const ViewProduct = () => {
       formdata.append("brand", brand);
       formdata.append("mrp", mrp);
       formdata.append("offerPrice", offerPrice);
-      Array.from(image).forEach((img) => {
-        formdata.append("image", img);
-      });
+
+      // Array.from(image).forEach((img) => {
+      //   formdata.append("image", img);
+      // });
 
       featureArray.forEach((item, i) => {
         formdata.append(`features[${i}]`, item);
       });
 
-      sizePrice.forEach((item, i) => {
-        formdata.append(`sizePrice[${i}][size]`, item.sizePriceSize);
-        formdata.append(`sizePrice[${i}][stock]`, item.sizePriceStock);
-      });
+      // sizePrice.forEach((item, i) => {
+      //   formdata.append(`sizePrice[${i}][size]`, item.sizePriceSize);
+      //   formdata.append(`sizePrice[${i}][stock]`, item.sizePriceStock);
+      // });
 
-      productArray.forEach((item, i) => {
-        formdata.append(`colors[${i}][name]`, item.productName);
-        formdata.append(`colors[${i}][image]`, item.productImageUrl);
-      });
+      // productArray.forEach((item, i) => {
+      //   formdata.append(`colors[${i}][name]`, item.productName);
+      //   formdata.append(`colors[${i}][image]`, item.productImageUrl);
+      // });
 
       console.log("ls", localStorage.getItem("token"));
       let url = `${BaseUrl()}api/v1/product/${id}`;
@@ -179,11 +190,9 @@ const ViewProduct = () => {
       if (props.show === true) {
         setName(product.name);
         setDescription(product.description);
-
         setImages(product.images?.[0]);
         setPrice(product.price);
-        setFeatures(product.features);
-
+        setFeatures("");
         setBrand(product.brand);
         setMrp(product.mrp);
         setOfferPrice(product.offerPrice);
@@ -249,7 +258,7 @@ const ViewProduct = () => {
                 onChange={(e) => setPrice(e.target.value)}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Product Size and Stock </Form.Label>
               <Form.Control
                 type="text"
@@ -274,7 +283,7 @@ const ViewProduct = () => {
               >
                 Add
               </Button>
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group className="mb-3">
               <Form.Label>Color Image and Name</Form.Label>
               <Form.Control
@@ -345,9 +354,16 @@ const ViewProduct = () => {
               <Form.Label>Product Image</Form.Label>
               <Form.Control
                 type="file"
-                onChange={(e) => setImages(e.target.files)}
-                multiple
+                onChange={(e) => setImages(e.target.files[0])}
               />
+              <Button
+                variant="dark"
+                style={{ marginTop: "10px" }}
+                type="button"
+                onClick={() => upload_image()}
+              >
+                Add
+              </Button>
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Product Brand</Form.Label>
