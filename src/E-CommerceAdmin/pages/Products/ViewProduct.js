@@ -52,14 +52,16 @@ const ViewProduct = () => {
       let url = `${BaseUrl()}api/v1/color/${id}`;
       const formdata = new FormData();
       formdata.append("name", productName);
-      formdata.append("image", productImage);
+      // formdata.append("image", productImage);
+      Array.from(productImage).forEach((img) => {
+        formdata.append("images", img);
+      });
       try {
         const res = await axios.post(url, formdata, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
         setProductName("");
         getProducts();
       } catch (error) {
@@ -289,7 +291,8 @@ const ViewProduct = () => {
               <Form.Control
                 type="file"
                 placeholder="Product Image ..."
-                onChange={(e) => setProductImage(e.target.files[0])}
+                onChange={(e) => setProductImage(e.target.files)}
+                multiple
               />
               <Form.Control
                 type="text"
@@ -547,7 +550,7 @@ const ViewProduct = () => {
               {product?.colors?.length > 0 && (
                 <div className="product_image_size_parent">
                   <p>Color : </p>
-                  {product?.colors?.slice(0, 5)?.map((item) => (
+                  {product?.colors?.map((item) => (
                     <div
                       style={{
                         width: "150px",
@@ -569,11 +572,19 @@ const ViewProduct = () => {
                           }}
                           onClick={() => handleDeleteImageandColor(item._id)}
                         />
-                        <img
-                          src={item?.image}
-                          alt=""
-                          style={{ objectFit: "cover", padding: "10px" }}
-                        />
+                        {item?.images?.map((pics, i) => (
+                          <img
+                            key={i}
+                            src={pics}
+                            alt=""
+                            style={{
+                              objectFit: "cover",
+                              padding: "10px",
+                              width: "400px",
+                              marginLeft: "1rem",
+                            }}
+                          />
+                        ))}
                       </div>
                       <p>{item?.name}</p>
                     </div>
@@ -583,7 +594,7 @@ const ViewProduct = () => {
 
               <div className="product_image_size_parent">
                 <p>Sizes : </p>
-                {product?.sizePrice?.slice(0, 5)?.map((item) => (
+                {product?.sizePrice?.map((item) => (
                   <div
                     style={{
                       width: "100px",
@@ -600,12 +611,14 @@ const ViewProduct = () => {
               </div>
             </div>
 
-            <p>
-              <strong>Product MRP</strong>
-              {"    "}
-              <i className="fa-solid fa-indian-rupee-sign"></i>
-              {product?.mrp}
-            </p>
+            <div>
+              <p>
+                <strong>Product MRP</strong>
+                {"    "}
+                <i className="fa-solid fa-indian-rupee-sign"></i>
+                {product?.mrp}
+              </p>
+            </div>
 
             <div className="two_Sec">
               <p className="first">

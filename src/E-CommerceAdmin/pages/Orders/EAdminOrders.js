@@ -9,8 +9,10 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SpinnerComp from "../../../SellerPanel/pages/Component/SpinnerComp";
+import { useNavigate } from "react-router-dom";
 
 const EAdminOrders = () => {
+  const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
   const [id, setId] = useState("");
 
@@ -265,6 +267,17 @@ const EAdminOrders = () => {
                           <Dropdown
                             overlay={
                               <Menu>
+                                <Menu.Item key="1">
+                                  <div
+                                    className="two_Sec_Div"
+                                    onClick={() =>
+                                      navigate(`/Orders/single/${i._id}`)
+                                    }
+                                  >
+                                    <i className="fa-solid fa-pen-to-square"></i>
+                                    <p>Single Order</p>
+                                  </div>
+                                </Menu.Item>
                                 <Menu.Item key="2">
                                   <div
                                     className="two_Sec_Div"

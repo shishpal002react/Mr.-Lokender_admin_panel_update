@@ -156,10 +156,10 @@ const EProduct = () => {
         formdata.append(`sizePrice[${i}][stock]`, item.sizePriceStock);
       });
 
-      productArray.forEach((item, i) => {
-        formdata.append(`colors[${i}][name]`, item.productName);
-        formdata.append(`colors[${i}][image]`, item.productImageUrl);
-      });
+      // productArray.forEach((item, i) => {
+      //   formdata.append(`colors[${i}][name]`, item.productName);
+      //   formdata.append(`colors[${i}][image]`, item.productImageUrl);
+      // });
 
       let url = `${BaseUrl()}api/v1/product/new/admin`;
       try {
@@ -304,7 +304,7 @@ const EProduct = () => {
                 Add
               </Button>
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Color Image and Name</Form.Label>
               <Form.Control
                 type="file"
@@ -327,7 +327,7 @@ const EProduct = () => {
               >
                 Add
               </Button>
-            </Form.Group>
+            </Form.Group> */}
             {/* category id */}
             <Form.Select
               aria-label="Default select example"
