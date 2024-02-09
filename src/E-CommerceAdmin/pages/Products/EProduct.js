@@ -74,7 +74,7 @@ const EProduct = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [image, setImages] = useState("");
-    const [price, setPrice] = useState();
+    // const [price, setPrice] = useState();
     const [categoryId, setCategoryId] = useState("");
     const [subCategoryId, setSubCategoryId] = useState("");
 
@@ -113,9 +113,17 @@ const EProduct = () => {
       imageURL();
     }, [productImage]);
 
+    //add feature
     const featureArrayFunction = () => {
-      setFeatureArray((prev) => [...prev, features]);
+      if(features){
+
+      }
       setFeatures("");
+    };
+
+     //remove feature
+     const featureArrayRemove = (i) => {
+      setFeatureArray((prev) => [...prev.filter((_,index)=>(index!==i))]);
     };
 
     const multiple_Product_color_name = () => {
@@ -124,11 +132,21 @@ const EProduct = () => {
       setProductName("");
     };
 
+
+    //add size and stock
     const multiple_adder = () => {
-      setSizePrice((prev) => [...prev, { sizePriceSize, sizePriceStock }]);
+      if(sizePriceSize && sizePriceStock) {
+        setSizePrice((prev) => [...prev, { sizePriceSize, sizePriceStock }]);
+      }
       setPriceSize("");
       setPriceStock("");
+      
     };
+
+    //filter size and product filterArray
+    const filterArray=(i)=>{
+      setSizePrice((prev)=> [...prev.filter((_,index)=>index!==i)]);
+    }
 
     const postData = async (e) => {
       e.preventDefault();
@@ -136,7 +154,7 @@ const EProduct = () => {
       formdata.append("name", name);
       formdata.append("description", description);
 
-      formdata.append("price", price);
+      // formdata.append("price", price);
       formdata.append("category", categoryId);
       formdata.append("subCategory", subCategoryId);
 
@@ -270,14 +288,14 @@ const EProduct = () => {
                 onChange={(e) => setOfferPrice(e.target.value)}
               />
             </Form.Group>
-            <Form.Group className="mb-3">
+            {/* <Form.Group className="mb-3">
               <Form.Label>Product Price</Form.Label>
               <Form.Control
                 type="text"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
-            </Form.Group>
+            </Form.Group> */}
             <Form.Group className="mb-3">
               <Form.Label>Product Size and Stock </Form.Label>
               <Form.Control
@@ -304,6 +322,31 @@ const EProduct = () => {
                 Add
               </Button>
             </Form.Group>
+{
+  sizePrice.length > 0 && (
+    <Table>
+    <thead>
+      <tr>
+        <th>Price Size</th>
+        <th>Price Stock</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+   <tbody>
+    {
+      sizePrice.map((item,i)=>(
+        <tr key={i}>
+        <td>{item?.sizePriceSize}</td>
+        <td>{item?.sizePriceStock}</td>
+        <td><i className="fa-sharp fa-solid fa-trash" onClick={()=>filterArray(i)}></i></td>
+        </tr>
+      ))
+    }
+   
+   </tbody>
+  </Table>
+  )
+}
             {/* <Form.Group className="mb-3">
               <Form.Label>Color Image and Name</Form.Label>
               <Form.Control
@@ -329,6 +372,7 @@ const EProduct = () => {
               </Button>
             </Form.Group> */}
             {/* category id */}
+            <Form.Label>Select Category And Sub Category</Form.Label>
             <Form.Select
               aria-label="Default select example"
               className="mb-3"
@@ -341,6 +385,7 @@ const EProduct = () => {
                 ))}
             </Form.Select>
             {/* subcategory */}
+
             <Form.Select
               aria-label="Default select example"
               className="mb-3"
@@ -370,6 +415,32 @@ const EProduct = () => {
                 Add
               </Button>
             </Form.Group>
+
+            {
+  featureArray.length > 0 && (
+    <Table>
+    <thead>
+      <tr>
+        <th>Feature Array</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+   <tbody>
+    {
+      featureArray.map((item,i)=>(
+        <tr key={i}>
+        <td>{item?.features}</td>
+        <td><i className="fa-sharp fa-solid fa-trash" onClick={()=>featureArrayRemove(i)}></i></td>
+        </tr>
+      ))
+    }
+   
+   </tbody>
+  </Table>
+  )
+}
+
+
             <Form.Group className="mb-3">
               <Form.Label>Product Image</Form.Label>
               <Form.Control
@@ -507,7 +578,7 @@ const EProduct = () => {
                     <th>Discount</th>
                     <th>Total Stock</th>
                     <th>MRP</th>
-                    <th>Price</th>
+                    {/* <th>Price</th> */}
                     <th>Selling Price</th>
                     <th>Discounted Price</th>
                     <th> </th>
@@ -519,7 +590,7 @@ const EProduct = () => {
                       <td> {index + 1} </td>
                       <td>
                         <img
-                          src={i?.images?.[0]}
+                          src={i?.images?.[0]?.image}
                           alt=""
                           style={{ width: "60px" }}
                         />
@@ -529,7 +600,7 @@ const EProduct = () => {
                       <td>{i.discountPercentage}</td>
                       <td>{i.stock}</td>
                       <td>{i.mrp}</td>
-                      <td>{i.price}</td>
+                      {/* <td>{i.price}</td> */}
                       <td>{i.offerPrice}</td>
                       <td>{i.discountedPrice}</td>
 

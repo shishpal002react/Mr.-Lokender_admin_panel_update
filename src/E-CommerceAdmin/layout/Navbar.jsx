@@ -21,7 +21,13 @@ const Navbar = ({ hamb, setHamb }) => {
         />
 
         <section className="flex sm:ml-auto justify-end sm:w-full items-center space-x-2  pr-2">
-          <figcaption className="tracking-wider pl-1 font-semibold">
+          <figcaption className="tracking-wider pl-1 font-semibold flex gap-4">
+          <div
+              className="lg:text-base text-sm text-gray-900  uppercase"
+              style={{ color: "#fff" }}
+            >
+              <a href="https://mr-lokender-website.vercel.app/" style={{color:"white",textDecoration:"none"}}> Website Link</a>
+            </div>
             <div
               className="lg:text-base text-sm text-gray-900  uppercase"
               style={{ color: "#fff" }}

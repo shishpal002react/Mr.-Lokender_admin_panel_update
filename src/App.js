@@ -31,6 +31,7 @@ import ProductSingleView from "./E-CommerceAdmin/pages/Seller/ProductSingleView"
 import Footer_Data from "./E-CommerceAdmin/pages/Footer_data/Footer_Data";
 import SalesAnlysis from "./E-CommerceAdmin/pages/SalesAnalyis/SalesAnlysis";
 import SingleOrder from "./E-CommerceAdmin/pages/Orders/SingleOrder";
+import ContectInformation from "./E-CommerceAdmin/pages/ContectInformation/ContectInformation";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/sales_detail" element={<SalesAnlysis />} />
+        <Route path="/contect_information" element={<ContectInformation />} />
         <Route path="/seller/product/:id" element={<SellerProducts />} />
         <Route
           path="/seller/single/product/:id"

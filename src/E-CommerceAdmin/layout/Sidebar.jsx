@@ -90,6 +90,11 @@ const Sidebar = ({ hamb, setHamb }) => {
     },
     {
       icon: <i className="fa-solid fa-barcode text-xl mr-3 rounded-full"></i>,
+      link: "/contect_information",
+      name: "Contect Information",
+    },
+    {
+      icon: <i className="fa-solid fa-barcode text-xl mr-3 rounded-full"></i>,
       link: "/terms",
       name: "Terms&Condition",
     },
