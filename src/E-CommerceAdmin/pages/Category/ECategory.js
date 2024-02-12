@@ -18,6 +18,8 @@ const ECategory = () => {
   const [editModel, setModelEdit] = React.useState(false);
   const [EditName, setEditName] = useState("");
   // const [editValue,setEditValue]=React.useState("");
+  const [showDiscount,setShowDiscount]=useState(false);
+  const [discountId,setDiscountId]=useState("");
 
   //api calling
   const [category, setCategory] = useState([]);
@@ -108,7 +110,7 @@ const ECategory = () => {
 
     const postData = async (e) => {
       e.preventDefault();
-      console.log("ls", localStorage.getItem("token"));
+
       let url = `${BaseUrl()}api/v1/admin/createCategory/${name}`;
       try {
         const res = await axios.post(url, formdata, {
@@ -266,6 +268,112 @@ const ECategory = () => {
     );
   }
 
+  const handleDiscount=(id)=>{
+    setDiscountId(id);
+    setShowDiscount(true);
+  }
+
+  //add discount
+  function MyVerticallyCenteredModalDiscount(props) {
+    //api calling please do it today
+
+    const [isDiscount, setIsDiscount] = useState();
+    const [discount, setDiscount] = useState();
+    const [discountType,setDiscountType]=useState("")
+
+
+    const putRequest = async (e) => {
+      e.preventDefault();
+      const data ={
+        isDiscount,
+        discount,
+        discountType
+      }
+     
+      let url = `${BaseUrl()}api/v1/admin/discountsOnProductCategory/${discountId}`;
+      try {
+        const res = await axios.put(url, data, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        toast("Discount Edit is successfully", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        setShowDiscount(false);
+        getProducts();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    return (
+      <Modal
+        {...props}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            {" "}
+            {"Edit Category"}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form onSubmit={putRequest}>
+        
+            <Form.Group className="mb-3">
+              <Form.Label>Discount Applicable</Form.Label>
+          
+              <Form.Select required
+                value={isDiscount}
+                onChange={(e) => setIsDiscount(e.target.value)}>
+              <option value="">Select any one</option>
+  <option value={true}>True</option>
+  <option value={false}>False</option>
+</Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>DiscountType</Form.Label>
+          
+              <Form.Select required
+                value={discountType}
+                onChange={(e) => setDiscountType(e.target.value)}>
+              <option value="">Select any one</option>
+  <option value="Percentage">Percentage</option>
+  <option value="Amount">Amount</option>
+</Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Discount</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                value={discount}
+                onChange={(e) => setDiscount(e.target.value)}
+              />
+            </Form.Group>
+
+            <Button
+              style={{
+                backgroundColor: "#19376d",
+                borderRadius: "0",
+                border: "1px solid #19376d",
+              }}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+
   return (
     <>
       <MyVerticallyCenteredModal
@@ -276,6 +384,11 @@ const ECategory = () => {
       <MyVerticallyCenteredModalEdit
         show={editModel}
         onHide={() => setModelEdit(false)}
+      />
+
+      <MyVerticallyCenteredModalDiscount
+        show={showDiscount}
+        onHide={() => setShowDiscount(false)}
       />
 
       <section>
@@ -325,6 +438,7 @@ const ECategory = () => {
                       <th>SNo.</th>
                       <th>Image</th>
                       <th>Name</th>
+                      <th>Discount</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -336,12 +450,15 @@ const ECategory = () => {
                           <img src={i.image} alt="" style={{ width: "60px" }} />
                         </td>
                         <td>{i.name} </td>
-
+                        {
+                          i?.discountType==="Percentage" ? <td>{i?.discount}%</td> :<td>{i?.discount}</td>
+                        }
+                        
                         <td>
                           <Dropdown
                             overlay={
                               <Menu>
-                                <Menu.Item key="2">
+                                <Menu.Item key="1">
                                   <div
                                     className="two_Sec_Div"
                                     onClick={() => {
@@ -353,6 +470,19 @@ const ECategory = () => {
                                     <i className="fa-solid fa-pen-to-square"></i>
                                     {/* onClick={() => setId(i._id)} */}
                                     <p>Edit </p>
+                                  </div>
+                                </Menu.Item>
+                                <Menu.Item key="2">
+                                  <div
+                                    className="two_Sec_Div"
+                                    onClick={() => {
+                                      // setEdit(true);
+                                      handleDiscount(i._id);
+                                      // setModelEdit(true);
+                                    }}
+                                  >
+                                    <i className="fa-solid fa-pen-to-square"></i>
+                                    <p>Add Coupon </p>
                                   </div>
                                 </Menu.Item>
                                 <Menu.Item key="3">

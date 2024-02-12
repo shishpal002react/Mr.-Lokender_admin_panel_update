@@ -75,11 +75,15 @@ const Sidebar = ({ hamb, setHamb }) => {
       link: "/Support",
       name: "Help & Suppport",
     },
-
     {
       icon: <i className="fa-solid fa-shield text-xl mr-3 rounded-full"></i>,
       link: "/privacy",
       name: "Privacy Policy",
+    },
+    {
+      icon: <i class="fa-brands fa-amazon-pay text-xl mr-3 rounded-full"></i>,
+      link: "/payment/gateway",
+      name: "Payment GateWay",
     },
     {
       icon: (

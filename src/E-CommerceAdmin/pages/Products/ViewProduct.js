@@ -627,13 +627,7 @@ const ViewProduct = () => {
                 <i className="fa-solid fa-indian-rupee-sign"></i>
                 {product.offerPrice}{" "}
               </p>
-              <p className="second">
-                {" "}
-                <strong> Product Price </strong>:
-                <i className="fa-solid fa-indian-rupee-sign"></i>{" "}
-                {/* {product.price + product.discountAmount}{" "} */}
-                {product.price}
-              </p>
+             
             </div>
 
             <strong>Product features :</strong>

@@ -134,7 +134,7 @@ const ContectInformation = () => {
               <Form.Label>Website Logo</Form.Label>
               <Form.Control
                 type="file" 
-                onChange={(e) => setEmail(e.target.files[0])}
+                onChange={(e) => setLogo(e.target.files[0])}
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -269,7 +269,7 @@ const ContectInformation = () => {
                     <h1>Website Logo</h1>
                 </div>
                 <div>
-                    <img src={data?.image} alt="image not found" style={{height:"200px",maxWidth:"auto"}}/>
+                    <img src={data?.image} alt="image not found" style={{maxHeight:"200px",maxWidth:"300px"}}/>
                 </div>
               </div>
 
@@ -308,7 +308,7 @@ const ContectInformation = () => {
                     </tr>
                     <tr>
                       <td style={{ fontWeight: "bold" }}>Youtube Link</td>
-                      <td>{data?.email}</td>
+                      <td>{data?.youtube}</td>
                     </tr>
                     <tr>
                       <td style={{ fontWeight: "bold" }}>Instagram Link</td>

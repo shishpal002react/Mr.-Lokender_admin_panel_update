@@ -32,6 +32,7 @@ import Footer_Data from "./E-CommerceAdmin/pages/Footer_data/Footer_Data";
 import SalesAnlysis from "./E-CommerceAdmin/pages/SalesAnalyis/SalesAnlysis";
 import SingleOrder from "./E-CommerceAdmin/pages/Orders/SingleOrder";
 import ContectInformation from "./E-CommerceAdmin/pages/ContectInformation/ContectInformation";
+import PaymentGateWay from "./E-CommerceAdmin/pages/PaymentGateway/PaymentGateWay";
 
 function App() {
   return (
@@ -63,7 +64,8 @@ function App() {
         />
         <Route path="/customerquery" element={<CustomerQuery />} />
         <Route path="/footer/data" element={<Footer_Data />} />
-
+        {/* payment gageway */}
+        <Route path="/payment/gateway" element={<PaymentGateWay/>} />
         {/* Selller */}
         <Route path="/sellerLogin" element={<SellerLogin />} />
         <Route path="/sellerDashboard" element={<SellerDashboard />} />

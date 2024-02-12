@@ -22,8 +22,7 @@ const EProduct = () => {
 
   const [product, setProduct] = useState([]);
   const getProducts = async () => {
-    console.log("ls", localStorage.getItem("token"));
-    console.log("login id", localStorage.getItem("ID"));
+
     let url = `${BaseUrl()}api/v1/products`;
 
     try {
@@ -116,7 +115,7 @@ const EProduct = () => {
     //add feature
     const featureArrayFunction = () => {
       if(features){
-
+        setFeatureArray((prev)=>[...prev,features]);
       }
       setFeatures("");
     };
@@ -429,7 +428,7 @@ const EProduct = () => {
     {
       featureArray.map((item,i)=>(
         <tr key={i}>
-        <td>{item?.features}</td>
+        <td>{item}</td>
         <td><i className="fa-sharp fa-solid fa-trash" onClick={()=>featureArrayRemove(i)}></i></td>
         </tr>
       ))
