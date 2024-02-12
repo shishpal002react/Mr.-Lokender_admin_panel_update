@@ -1,5 +1,4 @@
 /** @format */
-
 import React, { useEffect, useState } from "react";
 import { Alert, Table } from "react-bootstrap";
 import HOC from "../../layout/HOC";
@@ -34,6 +33,30 @@ const EAdminCustomer = () => {
   useEffect(() => {
     getProducts();
   }, []);
+
+
+  //handleBlockUser
+  const [userName,setUerName]=useState("");
+  const [role,setRole]=useState("");
+  const [id,setId]=useState("")
+
+  const handleBlockUser=async(i)=>{
+    try {
+      const res = await axios.put(`${BaseUrl()}api/v1/blockUnblockUser/${i._id}`,{}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      toast("Customer Block successfully", {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      getProducts();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
 
   const handleDelete = async (id) => {
     try {
@@ -130,6 +153,7 @@ const EAdminCustomer = () => {
                     <th>Image</th>
                     <th>First Name</th>
                     <th>Role</th>
+                    <th>User Status</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -150,10 +174,19 @@ const EAdminCustomer = () => {
                       </td>
                       <td> {i.name} </td>
                       <td>{i.role}</td>
+                      <td>{i.status}</td>
                       <td>
                         <Dropdown
                           overlay={
                             <Menu>
+                               <Menu.Item key="3">
+                                <div className="two_Sec_Div">
+                                  <i className="fa-solid fa-user"></i>
+                                  <p onClick={() => handleBlockUser(i)}>
+                                    Block Customer
+                                  </p>
+                                </div>
+                              </Menu.Item>
                               <Menu.Item key="3">
                                 <div className="two_Sec_Div">
                                   <i className="fa-sharp fa-solid fa-trash"></i>
